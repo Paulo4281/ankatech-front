@@ -1,7 +1,7 @@
 type TDescriptionProps = {
     text: string
     color: "white" | "blue" | "gray"
-    size: "sm" | "md" | "lg"
+    size: "sm" | "md" | "lg" | "xl"
 }
 
 const colorHandler: Record<TDescriptionProps["color"], string> = {
@@ -13,7 +13,8 @@ const colorHandler: Record<TDescriptionProps["color"], string> = {
 const sizeHandler: Record<TDescriptionProps["size"], string> = {
     sm: "text-md",
     md: "text-lg",
-    lg: "text-3xl"
+    lg: "text-2xl",
+    xl: "text-4xl"
 }
 
 function DescriptionComponent(
@@ -26,7 +27,7 @@ function DescriptionComponent(
     return (
         <>
             <p
-                className={`${colorHandler[color]} ${sizeHandler[size]}`}
+                className={`${colorHandler[color]} ${sizeHandler[size]} font-semibold`}
             >
                 {text}
             </p>
