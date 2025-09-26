@@ -11,6 +11,8 @@ import { Currency } from "@/components/Currency/Currency"
 import { ProgressBar } from "@/components/ProgressBar/ProgressBar"
 import { Badge } from "@/components/ui/badge"
 import { Divider } from "@/components/Divider/Divider"
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
+import { Label } from "@/components/ui/label"
 
 export default function Dashboard() {
   return (
@@ -126,7 +128,7 @@ export default function Dashboard() {
                   </div>
                   <Description
                       text="55 anos"
-                      color="blue"
+                      color="white"
                       size="md"
                     />
                 </div>
@@ -167,7 +169,7 @@ export default function Dashboard() {
                   </div>
                   <Description
                       text="65 anos"
-                      color="blue"
+                      color="white"
                       size="md"
                     />
                 </div>
@@ -178,6 +180,25 @@ export default function Dashboard() {
 
         </div>
 
+      </section>
+
+      <section className="py-20" id="heritage-projection-section">
+        <div>
+          <RadioGroup defaultValue="dead" className="flex justify-center">
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem className="p-3  data-[state=checked]:bg-blue-300 data-[state=checked]:border-blue-300" value="dead" id="dead" />
+              <Label className="text-white text-lg" htmlFor="dead">Morto</Label>
+            </div>
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem className="p-3 data-[state=checked]:bg-blue-300 data-[state=checked]:border-blue-300" value="invalid" id="invalid" />
+              <Label className="text-white text-lg" htmlFor="invalid">Inválido</Label>
+            </div>
+          </RadioGroup>
+        </div>
+
+        <div>
+          
+        </div>
       </section>
     </div>
   )
