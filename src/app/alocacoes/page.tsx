@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/select"
 import { Plus } from "lucide-react"
 import { CardAllocation } from "@/components/Card/CardAllocation/CardAllocation"
+import { DrawerAllocation } from "@/components/Drawer/DrawerAllocation/DrawerAllocation"
 
 export default function Alocacoes() {
     return (
@@ -21,7 +22,7 @@ export default function Alocacoes() {
                 className="
                     h-full
                     w-[1200px]
-                    bg-gray-500
+                    bg-zinc-800
                     rounded-2xl
                     p-5
                 "
@@ -36,7 +37,7 @@ export default function Alocacoes() {
                         </div>
                         <div className="flex gap-2">
                             <div className="flex gap-2">
-                                <Label htmlFor="alocacoes">Alocações:</Label>
+                                <Label htmlFor="alocacoes" className="text-white">Alocações:</Label>
                                 <Select>
                                     <SelectTrigger id="alocacoes" className="w-[220px] rounded-3xl !text-white text-lg">
                                         <SelectValue placeholder="Todos" />
@@ -49,7 +50,7 @@ export default function Alocacoes() {
                                 </Select>
                             </div>
                             <div>
-                                <Button variant={"orange"}><Plus /> Adicionar</Button>
+                                <DrawerAllocation />
                             </div>
                         </div>
                     </div>
