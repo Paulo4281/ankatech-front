@@ -1,7 +1,7 @@
 type TDescriptionProps = {
     text: string
     color: "white" | "blue" | "gray"
-    size: "sm" | "md" | "lg" | "xl"
+    size: "extra-sm" | "sm" | "md" | "lg" | "xl"
 }
 
 const colorHandler: Record<TDescriptionProps["color"], string> = {
@@ -11,6 +11,7 @@ const colorHandler: Record<TDescriptionProps["color"], string> = {
 }
 
 const sizeHandler: Record<TDescriptionProps["size"], string> = {
+    "extra-sm": "text-sm",
     sm: "text-md",
     md: "text-lg",
     lg: "text-2xl",

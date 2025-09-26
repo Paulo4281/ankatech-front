@@ -1,22 +1,42 @@
 import React from "react"
 
-type ProgressBarProps = {
+type TProgressBarProps = {
   value: number
   max?: number
   striked?: boolean
-  color?: string
   className?: string
   segments?: number
+  height?: "extra-small" | "sm" | "md"
+  color?: "cyan-blue" | "orange"
+  nonFilledColor?: "gray" | "white"
+}
+
+const heightHandler: Record<NonNullable<TProgressBarProps["height"]>, string> = {
+  "extra-small": "h-2.5",
+  sm: "h-4",
+  md: "h-12"
+}
+
+const nonFilledColorHandler: Record<NonNullable<TProgressBarProps["nonFilledColor"]>, string> = {
+  gray: "bg-gray-700",
+  white: "bg-white"
+}
+
+const colorHandler: Record<NonNullable<TProgressBarProps["color"]>, string> = {
+  "cyan-blue": "bg-gradient-to-r from-cyan-500 to-blue-500",
+  orange: "bg-orange-500"
 }
 
 export function ProgressBar({
   value,
   max=100,
   striked=false,
-  color="bg-gradient-to-r from-cyan-500 to-blue-500",
+  color="cyan-blue",
+  nonFilledColor="gray",
   className="",
   segments=30,
-}: ProgressBarProps) {
+  height="md"
+}: TProgressBarProps) {
   const percentage = Math.min(Math.max((value / max) * 100, 0), 100)
 
   if (striked) {
@@ -24,21 +44,21 @@ export function ProgressBar({
     const segmentElements = Array.from({ length: segments }, (_, i) => (
       <div
         key={i}
-        className={`${i < filledSegments ? color : "bg-gray-700"} h-full flex-1 rounded-2xl`}
+        className={`${i < filledSegments ? colorHandler[color] : `${nonFilledColorHandler[nonFilledColor]}`} h-full flex-1 rounded-2xl`}
         style={{ marginRight: i < segments - 1 ? "2px" : 0 }}
       />
     ))
 
     return (
-      <div className={`w-full h-12 flex overflow-hidden ${className}`}>
+      <div className={`w-full ${heightHandler[height]} flex overflow-hidden ${className}`}>
         {segmentElements}
       </div>
     )
   }
 
   return (
-    <div className={`w-full h-12 bg-gray-800 rounded ${className} overflow-hidden relative`}>
-      <div className={`${color} h-full`} style={{ width: `${percentage}%` }} />
+    <div className={`w-full ${heightHandler[height]} ${nonFilledColorHandler[nonFilledColor]} rounded ${className} overflow-hidden relative`}>
+      <div className={`${colorHandler[color]} h-full`} style={{ width: `${percentage}%` }} />
     </div>
   )
 }
