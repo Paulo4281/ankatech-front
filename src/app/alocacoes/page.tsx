@@ -1,5 +1,6 @@
+"use client"
+
 import { Description } from "@/components/Description/Description"
-import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
 import {
   Select,
@@ -8,11 +9,30 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { Plus } from "lucide-react"
 import { CardAllocation } from "@/components/Card/CardAllocation/CardAllocation"
 import { DrawerAllocation } from "@/components/Drawer/DrawerAllocation/DrawerAllocation"
+import { useState, useEffect } from "react"
+import { useFindAllocation } from "@/services/Allocation/AllocationService"
+import type { TAllocationResponse } from "@/types/Allocation/TAllocation"
+import { useSearchParams } from "next/navigation"
 
 export default function Alocacoes() {
+    const searchParams = useSearchParams()
+
+    const allocationTypes = searchParams.get("allocationTypeId") as string
+
+    const { data, isLoading, isError } = useFindAllocation({
+        allocationTypeId: allocationTypes
+    })
+
+
+    const [allocations, setAllocations] = useState<TAllocationResponse[]>([])
+
+    useEffect(() => {
+        setAllocations(data as TAllocationResponse[])
+        console.log(allocations)
+    }, [data])
+
     return (
         <>
         <div className="container">
@@ -56,19 +76,23 @@ export default function Alocacoes() {
                     </div>
 
                     <div>
-                        <CardAllocation
-                            title="CDB Banco Itaú"
-                            dateStart="20/06/2024"
-                            dateEnd="29/06/2024"
-                            amount="1.000.000"
-                            types={["financed", "manual-financial", "fixed"]}
-                            canUpdate={true}
-                            lastUpdate="20/06/2024"
-                            progressData={{
-                                installments: 20,
-                                totalInstallments: 80
-                            }}
-                        />
+                        {
+                            allocations?.length > 0 &&
+                            (
+                                allocations.map((allocation, index) => (
+                                    <CardAllocation
+                                        key={allocation.id}
+                                        title={allocation.title}
+                                        dateStart={allocation.createdAt || ""}
+                                        dateEnd={""}
+                                        amount={allocation.value}
+                                        types={allocation.types.map((type) => (type as any)?.allocationType?.name)}
+                                        canUpdate={true}
+                                        lastUpdate={allocation.updatedAt || ""}
+                                    />
+                                ))
+                            )
+                        }
                     </div>
 
                 </div>

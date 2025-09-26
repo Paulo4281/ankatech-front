@@ -15,23 +15,27 @@ import { useForm, Controller } from "react-hook-form"
 import type { TAllocation } from "@/types/Allocation/TAllocation"
 import { AllocationCreateValidator, AllocationTypes } from "@/validators/Allocation/AllocationValidator"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select"
+import { Select, SelectTrigger, SelectValue, SelectContent } from "@/components/ui/select"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { IMaskInput } from "react-imask"
 import { InputMask } from "@/components/Input/InputMask"
 import { InputCurrency } from "@/components/Input/InputCurrency"
+import { useSaveAllocation } from "@/services/Allocation/AllocationService"
+import { queryClient } from "@/providers/QueryClientProvider"
 
 function DrawerAllocationComponent() {
     const form = useForm<TAllocation>({
         resolver: zodResolver(AllocationCreateValidator)
     })
 
+    const saveAllocationService = useSaveAllocation()
+
     async function handleSubmit(data: TAllocation) {
-        console.log(data)
+        await saveAllocationService.mutateAsync(data)
+        // queryClient.invalidateQueries({ queryKey: ["allocation"] })
     }
 
-    const selectedType = form.watch("type")
+    const selectedTypes = form.watch("types")
 
     return (
         <>
@@ -59,37 +63,51 @@ function DrawerAllocationComponent() {
                 <div className="mt-2">
                     <Controller
                         control={form.control}
-                        name="type"
-                        render={({ field, fieldState }) => (
+                        name="types"
+                        render={({ field }) => (
                             <>
-                                <Label htmlFor="allocation-type" className="mb-2">Tipo</Label>
-                                <Select onValueChange={field.onChange} value={field.value}>
-                                    <SelectTrigger id="allocation-type" className="w-full rounded-3xl">
-                                        <SelectValue placeholder="Selecione o tipo" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        {AllocationTypes.map(option => (
-                                        <SelectItem key={option.value} value={option.value}>
-                                            {option.label}
-                                        </SelectItem>
-                                        ))}
-                                    </SelectContent>
-                                </Select>
+                            <Label className="mb-2">Tipo</Label>
+                            <Select>
+                                <SelectTrigger className="w-full rounded-3xl">
+                                <SelectValue placeholder="Selecione os tipos" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                {AllocationTypes.map(option => {
+                                    const checked = field.value?.includes(option.value) || false
+                                    return (
+                                    <div
+                                        key={option.value}
+                                        className="flex items-center px-2 py-1 cursor-pointer"
+                                        onClick={() => {
+                                        const newValue = checked
+                                            ? field.value.filter((v: string) => v !== option.value)
+                                            : [...(field.value ?? []), option.value]
+                                        field.onChange(newValue)
+                                        }}
+                                    >
+                                        <input type="checkbox" checked={checked} readOnly className="mr-2" />
+                                        {option.label}
+                                    </div>
+                                    )
+                                })}
+                                </SelectContent>
+                            </Select>
                             </>
                         )}
                     />
+
                 </div>
 
                 <div className="mt-2">
                     <Controller
                         control={form.control}
-                        name="name"
+                        name="title"
                         render={({ field, fieldState }) => (
                             <>
-                                <Label htmlFor="allocation-name" className="mb-2">Nome</Label>
+                                <Label htmlFor="allocation-title" className="mb-2">Nome</Label>
                                 <Input
                                     { ...field }
-                                    id="allocation-name"
+                                    id="allocation-title"
                                     type="text"
                                 />
                             </>
@@ -116,14 +134,14 @@ function DrawerAllocationComponent() {
                 </div>
 
                 {
-                    selectedType === "fixed" &&
+                    selectedTypes?.includes("75679762-aaf6-4393-8113-03a9309f0add") &&
                     (
                     <div className="mt-2">
 
                         <div>
                             <Controller
                                 control={form.control}
-                                name="startDate"
+                                name="dateStart"
                                 render={({ field, fieldState }) => (
                                     <>
                                         <Label htmlFor="allocation-fixed-startdate" className="mb-2">Data de início</Label>
@@ -202,7 +220,8 @@ function DrawerAllocationComponent() {
                         type="submit"
                         variant={"default"}
                         form="form-allocation"
-                    >Salvar</Button>
+                        disabled={saveAllocationService.isPending}
+                    >{ saveAllocationService.isPending ? "Salvando..." : "Salvar" }</Button>
                 </DrawerFooter>
 
             </div>

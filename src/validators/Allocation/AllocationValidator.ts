@@ -3,27 +3,35 @@ import { DefaultFormErrors } from "@/utils/errors/DefaultFormErrors"
 
 const AllocationTypes = [
     {
-        value: "fixed",
+        value: "75679762-aaf6-4393-8113-03a9309f0add",
         label: "Imobilizada"
     },
     {
-        value: "financial",
+        value: "f8248cb3-0cb2-43ca-bd59-f803de603d1c",
         label: "Financeira"
+    },
+    {
+        value: "983b8fee-1957-47a4-8785-8d4e1819137d",
+        label: "Financeira Manual"
     }
 ]
 
 const AllocationCreateValidator = z.object({
-    type: z.enum(AllocationTypes.map((type) => type.value), { error: DefaultFormErrors.required }),
-    name: z.string().min(1, { error: DefaultFormErrors.required }),
+    types: z.array(
+        z.enum(
+            AllocationTypes.map((type) => type.value)
+        )
+    ).nonempty({ error: DefaultFormErrors.required }),
+    title: z.string().min(1, { error: DefaultFormErrors.required }),
     value: z.string().min(1, { error: DefaultFormErrors.required }),
     
-    startDate: z.string().optional(),
+    dateStart: z.string().optional(),
     installments: z.string().optional(),
     interestRate: z.string().optional(),
     entryValue: z.string().optional()
 }).superRefine((data, ctx) => {
-    if (data.type === "fixed") {
-        if (!data.startDate) {
+    if (data.types.includes("75679762-aaf6-4393-8113-03a9309f0add")) {
+        if (!data.dateStart) {
         ctx.addIssue({ path: ["startDate"], code: "custom", message: DefaultFormErrors.required })
         }
         if (!data.installments) {

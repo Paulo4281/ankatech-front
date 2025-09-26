@@ -15,5 +15,6 @@ function QueryProvider({ children }: { children: React.ReactNode }) {
 }
 
 export {
-    QueryProvider
+    QueryProvider,
+    queryClient
 }

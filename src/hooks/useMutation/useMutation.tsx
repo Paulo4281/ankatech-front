@@ -4,12 +4,12 @@ type TUseMutationProps = {
     mutationFn: any
 }
 
-function useMutationHook<T, U>(
+function useMutationHook<T, R>(
     {
         mutationFn
     }: TUseMutationProps
 ) {
-    return useMutation<U, unknown, T>({
+    return useMutation<R, unknown, T>({
         mutationFn: mutationFn
     })
 }

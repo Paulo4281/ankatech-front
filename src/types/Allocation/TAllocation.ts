@@ -3,13 +3,18 @@ import { AllocationCreateValidator } from "@/validators/Allocation/AllocationVal
 
 type TAllocation = z.infer<typeof AllocationCreateValidator>
 
-type TAllocationFind = TAllocation & {
+type TAllocationResponse = TAllocation & {
     id: string
     updatedAt: string
     createdAt: string
 }
 
+type TAllocationFindParams = {
+    allocationTypeId: string
+}
+
 export type {
     TAllocation,
-    TAllocationFind
+    TAllocationResponse,
+    TAllocationFindParams
 }

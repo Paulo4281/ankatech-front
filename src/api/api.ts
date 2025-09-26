@@ -16,7 +16,7 @@ type TAPIError = {
     statusCode: number
 }
 
-class API {
+export class API {
     static async POST(params: TApiParams): Promise<AxiosResponse<any, any, {}> | undefined> {
         try {
             const response = await axios.post(

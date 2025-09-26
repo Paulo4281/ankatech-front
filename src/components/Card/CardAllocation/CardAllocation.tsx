@@ -5,7 +5,7 @@ import { Description } from "@/components/Description/Description"
 import { ProgressBar } from "@/components/ProgressBar/ProgressBar"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { ChevronDown, ChevronUp, DollarSign, EllipsisVertical, Eye, Pencil } from "lucide-react"
+import { DollarSign, EllipsisVertical, Eye } from "lucide-react"
 import { JSX } from "react"
 import {
   DropdownMenu,
@@ -18,8 +18,9 @@ import { Collapsible, CollapsibleTrigger, CollapsibleContent } from "@/component
 import { TimelineAllocation } from "@/components/Timeline/TimelineAllocation/TimelineAllocation"
 import { useState } from "react"
 import { DrawerAllocationUpdate } from "@/components/Drawer/DrawerAllocation/DrawerAllocationUpdate"
+import { DateUtils } from "@/utils/helpers/DateUtils/DateUtils"
 
-type AvailableTypes = "manual-financial" | "fixed" | "financed"
+type AvailableTypes = "Financeira Manual" | "Imobilizada" | "Financeira"
 
 type TCardAllocationProps = {
     title: string
@@ -37,13 +38,13 @@ type TCardAllocationProps = {
 }
 
 const badgeHandler: Record<NonNullable<TCardAllocationProps["types"]>[number], () => JSX.Element> = {
-    "manual-financial": () => {
+    "Financeira Manual": () => {
         return <Badge variant={"success"}>Financeira Manual</Badge>
     },
-    financed: () => {
+    Financeira: () => {
         return <Badge variant={"white"}><DollarSign /> Financiado</Badge>
     },
-    fixed: () => {
+    Imobilizada: () => {
         return <Badge variant={"orange"}>Imobilizada</Badge>
     }
 }
@@ -63,6 +64,7 @@ function CardAllocationComponent(
 ) {
     const [collapsed, setCollapsed] = useState<boolean>(false)
 
+    console.log(dateStart)
 
     return (
         <>
@@ -105,7 +107,7 @@ function CardAllocationComponent(
                                     :
                                     (
                                         <Description 
-                                            text={`Início: ${dateStart}`}
+                                            text={`Início: ${DateUtils.formatDate(dateStart)}`}
                                             color="white"
                                             size="extra-sm"
                                         />
