@@ -8,7 +8,7 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "@/components/ui/drawer"
-import {  Pencil, Plus, X } from "lucide-react"
+import {  Pencil, X } from "lucide-react"
 
 function DrawerAllocationUpdateComponent() {
     return (
@@ -23,7 +23,7 @@ function DrawerAllocationUpdateComponent() {
                 <DrawerTitle className="text-2xl">Atualizar Alocação</DrawerTitle>
                 </DrawerHeader>
                 <DrawerClose asChild className="my-2 mx-2">
-                    <Button size="icon"><X /></Button>
+                    <Button variant={"ghost"} size="icon"><X /></Button>
                 </DrawerClose>
             </div>
 

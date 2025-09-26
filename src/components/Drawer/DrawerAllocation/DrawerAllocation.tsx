@@ -52,6 +52,7 @@ function DrawerAllocationComponent() {
             <div className="h-full w-full p-3">
 
                 <form
+                    id="form-allocation"
                     onSubmit={form.handleSubmit(handleSubmit)}
                 >
 
@@ -108,11 +109,7 @@ function DrawerAllocationComponent() {
                                     id="allocation-value"
                                     value={field.value ?? ""}
                                     onChangeValue={field.onChange}
-                                    type="number"
                                 />
-                                <div>
-                                    {fieldState.error?.message}
-                                </div>
                             </>
                         )}
                     />
@@ -198,14 +195,14 @@ function DrawerAllocationComponent() {
                     )
                 }
 
-                <div className="mt-5 text-end">
-                    <Button type="submit" variant={"orange"}>Salvar</Button>
-                </div>
-
                 </form>
 
                 <DrawerFooter>
-
+                    <Button
+                        type="submit"
+                        variant={"default"}
+                        form="form-allocation"
+                    >Salvar</Button>
                 </DrawerFooter>
 
             </div>

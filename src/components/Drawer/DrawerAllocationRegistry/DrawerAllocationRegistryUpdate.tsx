@@ -23,7 +23,7 @@ function DrawerAllocationRegistryUpdateComponent() {
               <DrawerTitle className="text-2xl">Editar Registro</DrawerTitle>
             </DrawerHeader>
             <DrawerClose asChild className="my-2 mx-2">
-                <Button size="icon"><X /></Button>
+                <Button variant={"ghost"} size="icon"><X /></Button>
             </DrawerClose>
         </div>
 
