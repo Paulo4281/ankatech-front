@@ -9,13 +9,17 @@ import { useFindAllocation } from "@/services/Allocation/AllocationService"
 import { TAllocationResponse } from "@/types/Allocation/TAllocation"
 import { AllocationTypes } from "@/validators/Allocation/AllocationValidator"
 import { useEffect, useState } from "react"
+import { useFamilyMemberStore } from "@/stores/FamilyMember/FamilyMemberStore"
 
 function AllocationsCardsSectionComponent() {
     const [selectedAllocationTypeId, setSelectedAllocationTypeId] = useState<string>("75679762-aaf6-4393-8113-03a9309f0add,f8248cb3-0cb2-43ca-bd59-f803de603d1c,983b8fee-1957-47a4-8785-8d4e1819137d")
 
+    const { familyMember } = useFamilyMemberStore()
+
     const { data, isLoading, isError } = useFindAllocation({
         filters: {
-            allocationTypeId: selectedAllocationTypeId
+            allocationTypeId: selectedAllocationTypeId,
+            familyMemberId: familyMember?.id as string
         }
     })
 
@@ -73,7 +77,8 @@ function AllocationsCardsSectionComponent() {
 
                     <div>
                         {
-                            allocations?.length > 0 &&
+                            allocations?.length > 0
+                            ?
                             (
                                 allocations.map((allocation, index) => (
                                     <CardAllocation
@@ -92,6 +97,16 @@ function AllocationsCardsSectionComponent() {
                                         registries={allocation.registries}
                                     />
                                 ))
+                            )
+                            :
+                            (
+                                <div className="mt-6 text-center">
+                                    <Description
+                                        text="Nenhuma alocação encontrada"
+                                        color="white"
+                                        size="md"
+                                    />
+                                </div>
                             )
                         }
                     </div>

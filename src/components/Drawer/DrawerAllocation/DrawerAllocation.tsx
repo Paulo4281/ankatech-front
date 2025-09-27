@@ -23,11 +23,14 @@ import { InputCurrency } from "@/components/Input/InputCurrency"
 import { useSaveAllocation } from "@/services/Allocation/AllocationService"
 import { queryClient } from "@/providers/QueryClientProvider"
 import { Toast } from "@/components/Toast/Toast"
+import { useFamilyMemberStore } from "@/stores/FamilyMember/FamilyMemberStore"
 
 function DrawerAllocationComponent() {
     const form = useForm<TAllocation>({
         resolver: zodResolver(AllocationCreateValidator)
     })
+
+    const { familyMember } = useFamilyMemberStore()
 
     const saveAllocationService = useSaveAllocation({
         onSuccess: () => {
@@ -38,6 +41,7 @@ function DrawerAllocationComponent() {
     })
 
     async function handleSubmit(data: TAllocation) {
+        data.familyMemberId = familyMember?.id
         await saveAllocationService.mutateAsync(data)
     }
 

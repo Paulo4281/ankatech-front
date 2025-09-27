@@ -42,7 +42,7 @@ function TimelineHeritageComponent() {
                 wageEvents.length > 0 &&
                 (
                     wageEvents.map((wageEvent) => (
-                        <div className="relative z-10 flex flex-col items-center">
+                        <div key={wageEvent.title} className="relative z-10 flex flex-col items-center">
                             <p className="text-green-400 text-center mb-6 -mt-1.5 text-sm">{wageEvent.title} {ValueUtils.centsIntToCurrency(wageEvent.amount)}</p>
                             <div className="w-6 h-6 bg-green-400 rounded-full border-2 border-gray-900 mt-3.5 absolute"></div>
                             <div className="flex flex-col items-center space-y-1"></div>
@@ -76,19 +76,19 @@ function TimelineHeritageComponent() {
             {
                 expenseEvents.length > 0 &&
                 (
-                    expenseEvents.map((exepnseEvent) => (
-                        <div className="relative z-10 flex flex-col items-center">
+                    expenseEvents.map((expenseEvent) => (
+                        <div key={expenseEvent.amount} className="relative z-10 flex flex-col items-center">
                             <div className="w-6 h-6 bg-red-400 rounded-full border-2 border-gray-900 mt-2 absolute"></div>
-                            <p className="text-red-400 text-center mt-8 text-sm">
+                            <div className="text-red-400 text-center mt-8 text-sm">
                                 {
                                     <Currency
-                                        amount={ValueUtils.centsIntToCurrency(exepnseEvent.amount)}
+                                        amount={ValueUtils.centsIntToCurrency(expenseEvent.amount)}
                                         amountColor="red"
                                         size="extra-sm"
                                         showSymbol={false}
                                     />
                                 }
-                            </p>
+                            </div>
                             <div className="flex flex-col items-center space-y-1"></div>
                         </div>
                     ))

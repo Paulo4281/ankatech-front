@@ -32,7 +32,10 @@ function DrawerAllocationRegistryComponent(
   }: TDrawerAllocationRegistryProps
 ) {
     const form = useForm<TAllocationRegistryCreate>({
-      resolver: zodResolver(AllocationRegistryCreateValidation)
+      resolver: zodResolver(AllocationRegistryCreateValidation),
+      defaultValues: {
+        date: new Date(),
+      }
     })
 
     const saveAllocationRegistryService = useSaveAllocationRegistry({

@@ -1,4 +1,4 @@
-import { AllocationsCardSection } from "@/components/Pages/Allocations/AllocationsCardsSection/AllocationsCardsSection";
+import { AllocationsCardSection } from "@/components/Pages/Allocations/AllocationsCardsSection/AllocationsCardsSection"
 
 export default function Alocacoes() {
     return (

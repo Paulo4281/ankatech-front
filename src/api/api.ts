@@ -4,6 +4,7 @@ import axios, { AxiosError, AxiosResponse } from "axios"
 type TPrefixes =
     "/allocation" |
     "/allocation-registry" |
+    "/family-member" |
     "history"
 
 type TApiParams = {

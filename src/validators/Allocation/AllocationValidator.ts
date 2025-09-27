@@ -26,6 +26,7 @@ const AllocationCreateValidator = z.object({
     value: z.string().min(1, { error: DefaultFormErrors.required }),
     dateStart: z.string(),
     
+    familyMemberId: z.string().optional(),
     dateEnd: z.string().optional(),
     installments: z.string().optional(),
     interestRate: z.string().optional(),
