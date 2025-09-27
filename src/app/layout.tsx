@@ -10,7 +10,7 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en">
+    <html lang="pt-BR">
       <body
         className={`antialiased !overflow-x-hidden bg-black`}
       >
@@ -19,7 +19,7 @@ export default function RootLayout({
             <Sidebar />
             
             <ToastContainer />
-              <main>
+              <main className="!w-full">
                 <SidebarTrigger className="bg-white cursor-pointer ms-2 mt-1" />
                 {children}
               </main>

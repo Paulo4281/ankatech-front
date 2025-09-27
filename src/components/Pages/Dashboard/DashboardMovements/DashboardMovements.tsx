@@ -1,5 +1,6 @@
 import { CardMovement } from "@/components/Card/CardMovement/CardMovement"
 import { Button } from "@/components/ui/button"
+import { Plus } from "lucide-react"
 
 function DashboardMovementsComponent() {
     return (
@@ -12,6 +13,7 @@ function DashboardMovementsComponent() {
             <div className="flex gap-2">
                 <Button variant={"outline"}>Financeiras</Button>
                 <Button variant={"secondary-outline"}>Imobilizadas</Button>
+                <Button variant={"secondary"} size="icon"><Plus /></Button>
             </div>
             </div>
 
