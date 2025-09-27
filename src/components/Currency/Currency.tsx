@@ -16,7 +16,7 @@ type TCurrencyProps = {
 
 const symbolColorHandler: Record<NonNullable<TCurrencyProps["symbolColor"]>, string> = {
     white: "text-white",
-    gray: "text-gray-500"
+    gray: "text-gray-500",
 }
 
 const plusDataPositionHandler: Record<NonNullable<TCurrencyProps["plusData"]>["position"], string> = {
