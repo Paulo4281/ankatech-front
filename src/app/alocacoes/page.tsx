@@ -67,7 +67,7 @@ export default function Alocacoes() {
                                         <SelectItem value="75679762-aaf6-4393-8113-03a9309f0add,f8248cb3-0cb2-43ca-bd59-f803de603d1c,983b8fee-1957-47a4-8785-8d4e1819137d">Todos</SelectItem>
                                         {
                                             AllocationTypes.map((type) => (
-                                                <SelectItem value={type.value}>{type.label}</SelectItem>
+                                                <SelectItem key={type.value} value={type.value}>{type.label}</SelectItem>
                                             ))
                                         }
                                     </SelectContent>
@@ -91,10 +91,13 @@ export default function Alocacoes() {
                                         dateStart={allocation.createdAt || ""}
                                         dateEnd={allocation.dateEnd || ""}
                                         amount={allocation.value}
+                                        entryValue={allocation.entryValue}
+                                        totalInstallments={allocation.installments}
                                         types={allocation.types.map((type) => (type as any).allocationType?.name)}
                                         canUpdate={true}
                                         lastUpdate={allocation.updatedAt || ""}
                                         timelineItems={allocation.registries}
+                                        registries={allocation.registries}
                                     />
                                 ))
                             )

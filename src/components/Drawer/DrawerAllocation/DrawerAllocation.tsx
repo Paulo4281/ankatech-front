@@ -159,7 +159,7 @@ function DrawerAllocationComponent() {
                 </div>
 
                 {
-                    selectedTypes?.includes("75679762-aaf6-4393-8113-03a9309f0add") &&
+                    selectedTypes?.includes("f8248cb3-0cb2-43ca-bd59-f803de603d1c") &&
                     (
                     <div>
 
@@ -169,7 +169,7 @@ function DrawerAllocationComponent() {
                                 name="dateEnd"
                                 render={({ field, fieldState }) => (
                                     <>
-                                        <Label htmlFor="" className="mb-2">Data de fim</Label>
+                                        <Label htmlFor="" className="mb-2">Data de fim *</Label>
                                         <InputMask
                                             { ...field }
                                             id="allocation-fixed-dateend"
@@ -188,7 +188,7 @@ function DrawerAllocationComponent() {
                                 name="installments"
                                 render={({ field, fieldState }) => (
                                     <>
-                                        <Label htmlFor="allocation-fixed-installments" className="mb-2">Quantidade de parcelas</Label>
+                                        <Label htmlFor="allocation-fixed-installments" className="mb-2">Quantidade de parcelas *</Label>
                                         <Input
                                             { ...field }
                                             id="allocation-fixed-installments"
@@ -205,7 +205,7 @@ function DrawerAllocationComponent() {
                                 name="interestRate"
                                 render={({ field, fieldState }) => (
                                     <>
-                                        <Label htmlFor="allocation-fixed-interestrate" className="mb-2">Taxa de juros (%)</Label>
+                                        <Label htmlFor="allocation-fixed-interestrate" className="mb-2">Taxa de juros (%) *</Label>
                                         <Input
                                             { ...field }
                                             id="allocation-fixed-interestrate"
@@ -222,7 +222,7 @@ function DrawerAllocationComponent() {
                                 name="entryValue"
                                 render={({ field, fieldState }) => (
                                     <>
-                                        <Label htmlFor="allocation-fixed-entryvalue" className="mb-2">Entrada</Label>
+                                        <Label htmlFor="allocation-fixed-entryvalue" className="mb-2">Entrada *</Label>
                                         <InputCurrency
                                             { ...field }
                                             id="allocation-fixed-entryvalue"

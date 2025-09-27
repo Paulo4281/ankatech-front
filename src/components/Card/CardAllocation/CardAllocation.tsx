@@ -21,7 +21,7 @@ import { DateUtils } from "@/utils/helpers/DateUtils/DateUtils"
 import { ValueUtils } from "@/utils/helpers/ValueUtils/ValueUtils"
 import type { TAllocationRegistryResponse } from "@/types/Allocation/TAllocationRegistry"
 
-type AvailableTypes = "Financeira Manual" | "Imobilizada" | "Financeira"
+type AvailableTypes = "Financeira Manual" | "Imobilizada" | "Financiado"
 
 type TCardAllocationProps = {
     id: string
@@ -33,18 +33,17 @@ type TCardAllocationProps = {
     canUpdate?: boolean
     lastUpdate?: string
     totalAmount?: string
+    totalInstallments?: string
+    entryValue?: string
     timelineItems?: TAllocationRegistryResponse[]
-    progressData?: {
-        installments: number
-        totalInstallments: number
-    }
+    registries: TAllocationRegistryResponse[]
 }
 
 const badgeHandler: Record<NonNullable<TCardAllocationProps["types"]>[number], () => JSX.Element> = {
     "Financeira Manual": () => {
         return <Badge variant={"success"}>Financeira Manual</Badge>
     },
-    Financeira: () => {
+    Financiado: () => {
         return <Badge variant={"white"}><DollarSign /> Financiado</Badge>
     },
     Imobilizada: () => {
@@ -63,11 +62,21 @@ function CardAllocationComponent(
         canUpdate=false,
         lastUpdate="",
         totalAmount="",
-        progressData={ installments: 0, totalInstallments: 0 },
-        timelineItems=[]
+        entryValue,
+        totalInstallments="",
+        timelineItems=[],
+        registries=[]
     }: TCardAllocationProps
 ) {
     const [collapsed, setCollapsed] = useState<boolean>(false)
+
+    let totalFinancialPaid = Number(entryValue) || 0
+
+    if (registries.length) {
+        registries.forEach((registry) => {
+            totalFinancialPaid += Number(registry.value)
+        })
+    }
 
     return (
         <>
@@ -117,21 +126,21 @@ function CardAllocationComponent(
                                     )
                                 }
                                 {
-                                    progressData.totalInstallments > 0
+                                    types.includes("Financiado")
                                     &&
                                     (
                                         <div className="mt-2">
                                             <Description
-                                                text={`Progresso: ${progressData.installments}/${progressData.totalInstallments} parcelas`}
+                                                text={`Progresso: ${registries.length}/${totalInstallments} parcelas`}
                                                 color="gray"
                                                 size="extra-sm"
                                             />
                                             <ProgressBar
-                                                value={progressData.installments}
-                                                max={progressData.totalInstallments}
+                                                value={registries.length}
+                                                max={Number(totalInstallments)}
                                                 color="orange"
                                                 nonFilledColor="white"
-                                                segments={progressData.totalInstallments}
+                                                segments={Number(totalInstallments)}
                                                 height="extra-small"
                                             />
                                         </div>
@@ -149,17 +158,45 @@ function CardAllocationComponent(
                                 )
                             }
                             <div className="flex flex-col">
-                                <Currency
-                                    amount={ValueUtils.centsIntToCurrency(Number(amount))}
-                                    amountColor="white"
-                                    size="lg"
-                                    showSymbol={false}                                    
-                                />
+                                {
+                                    types.includes("Financiado")
+                                    ?
+                                    (
+                                        <div className="flex flex-col">
+                                            <div>
+                                                <Currency
+                                                    amount={ValueUtils.centsIntToCurrency(totalFinancialPaid)}
+                                                    amountColor="white"
+                                                    size="md"
+                                                    showSymbol={false}
+                                                />
+                                            </div>
+                                            <div className="flex items-center gap-1">
+                                                <span className="text-gray-500 text-sm">de</span>
+                                                <Currency
+                                                    amount={ValueUtils.centsIntToCurrency(Number(amount))}
+                                                    amountColor="gray"
+                                                    size="extra-sm"
+                                                    showSymbol={false}
+                                                />
+                                            </div>
+                                        </div>
+                                    )
+                                    :
+                                    (
+                                        <Currency
+                                            amount={ValueUtils.centsIntToCurrency(Number(amount))}
+                                            amountColor="white"
+                                            size="lg"
+                                            showSymbol={false}                                    
+                                        />
+                                    )
+                                }
                                 {
                                     lastUpdate &&
                                     (
                                         <Description
-                                            text={`Última atualização: ${lastUpdate}`}
+                                            text={`Última atualização: ${DateUtils.formatDate(lastUpdate)}`}
                                             color="white"
                                             size="extra-sm"
                                         />
