@@ -22,17 +22,23 @@ import { InputMask } from "@/components/Input/InputMask"
 import { InputCurrency } from "@/components/Input/InputCurrency"
 import { useSaveAllocation } from "@/services/Allocation/AllocationService"
 import { queryClient } from "@/providers/QueryClientProvider"
+import { Toast } from "@/components/Toast/Toast"
 
 function DrawerAllocationComponent() {
     const form = useForm<TAllocation>({
         resolver: zodResolver(AllocationCreateValidator)
     })
 
-    const saveAllocationService = useSaveAllocation()
+    const saveAllocationService = useSaveAllocation({
+        onSuccess: () => {
+            form.reset()
+            Toast.success("Alocação cadastrada com sucesso")
+            queryClient.invalidateQueries({ queryKey: ["allocation"] })
+        }
+    })
 
     async function handleSubmit(data: TAllocation) {
         await saveAllocationService.mutateAsync(data)
-        // queryClient.invalidateQueries({ queryKey: ["allocation"] })
     }
 
     const selectedTypes = form.watch("types")
@@ -66,7 +72,7 @@ function DrawerAllocationComponent() {
                         name="types"
                         render={({ field }) => (
                             <>
-                            <Label className="mb-2">Tipo</Label>
+                            <Label className="mb-2">Tipo *</Label>
                             <Select>
                                 <SelectTrigger className="w-full rounded-3xl">
                                 <SelectValue placeholder="Selecione os tipos" />
@@ -104,7 +110,7 @@ function DrawerAllocationComponent() {
                         name="title"
                         render={({ field, fieldState }) => (
                             <>
-                                <Label htmlFor="allocation-title" className="mb-2">Nome</Label>
+                                <Label htmlFor="allocation-title" className="mb-2">Nome *</Label>
                                 <Input
                                     { ...field }
                                     id="allocation-title"
@@ -121,7 +127,7 @@ function DrawerAllocationComponent() {
                         name="value"
                         render={({ field, fieldState }) => (
                             <>
-                                <Label htmlFor="allocation-value" className="mb-2">Valor</Label>
+                                <Label htmlFor="allocation-value" className="mb-2">Valor *</Label>
                                 <InputCurrency
                                     { ...field }
                                     id="allocation-value"
@@ -133,25 +139,43 @@ function DrawerAllocationComponent() {
                     />
                 </div>
 
+                <div className="mt-2">
+                    <Controller
+                        control={form.control}
+                        name="dateStart"
+                        render={({ field, fieldState }) => (
+                            <>
+                                <Label htmlFor="allocation-fixed-dateend" className="mb-2">Data de início *</Label>
+                                <InputMask
+                                    { ...field }
+                                    id="allocation-fixed-dateend"
+                                    placeholder="00/00/0000"
+                                    mask="00/00/0000"
+                                    inputMode="numeric"
+                                />
+                            </>
+                        )}
+                    />
+                </div>
+
                 {
                     selectedTypes?.includes("75679762-aaf6-4393-8113-03a9309f0add") &&
                     (
-                    <div className="mt-2">
+                    <div>
 
-                        <div>
+                        <div className="mt-2">
                             <Controller
                                 control={form.control}
-                                name="dateStart"
+                                name="dateEnd"
                                 render={({ field, fieldState }) => (
                                     <>
-                                        <Label htmlFor="allocation-fixed-startdate" className="mb-2">Data de início</Label>
+                                        <Label htmlFor="" className="mb-2">Data de fim</Label>
                                         <InputMask
                                             { ...field }
-                                            id="allocation-fixed-startdate"
+                                            id="allocation-fixed-dateend"
                                             placeholder="00/00/0000"
                                             mask="00/00/0000"
                                             inputMode="numeric"
-                                            className="file:text-foreground placeholder:text-muted-foreground selection:bg-primary selection:text-primary-foreground dark:bg-input/30 border-input h-9 w-full min-w-0 rounded-md border bg-transparent px-3 py-1 text-base shadow-xs transition-[color,box-shadow] outline-none file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
                                         />
                                     </>
                                 )}

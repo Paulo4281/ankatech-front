@@ -1,8 +1,9 @@
 import { API } from "@/api/api"
 import { useMutationHook } from "@/hooks/useMutation/useMutation"
 import { useQueryHook } from "@/hooks/useQuery/useQuery"
-import { TAllocation, TAllocationFindParams, TAllocationResponse } from "@/types/Allocation/TAllocation"
+import type { TAllocation, TAllocationFindParams, TAllocationResponse } from "@/types/Allocation/TAllocation"
 import { objectToQueryString } from "@/utils/helpers/ObjToQueryString/ObjToQueryString"
+import type { TServiceProps } from "../TService"
 class AllocationService {
     public static async saveAllocationRoute(data: TAllocation) {
         return (await API.POST({
@@ -22,17 +23,18 @@ class AllocationService {
     }
 }
 
-function useSaveAllocation() {
+function useSaveAllocation(params?: TServiceProps) {
     return useMutationHook<TAllocation, TAllocationResponse>({
-        mutationFn: (data: TAllocation) => AllocationService.saveAllocationRoute(data)
+        mutationFn: (data: TAllocation) => AllocationService.saveAllocationRoute(data),
+        onSuccess: params?.onSuccess
     })
 }
 
-function useFindAllocation(filters?: TAllocationFindParams) {
+function useFindAllocation(params?: TServiceProps) {
     return useQueryHook<TAllocationResponse[]>({
         queryKey: "allocation",
-        queryParams: filters,
-        queryFn: () => AllocationService.findAllocationRoute(filters)
+        queryParams: params?.filters,
+        queryFn: () => AllocationService.findAllocationRoute(params?.filters)
     })
 }
 

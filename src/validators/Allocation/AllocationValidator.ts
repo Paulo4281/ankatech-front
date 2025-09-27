@@ -24,14 +24,15 @@ const AllocationCreateValidator = z.object({
     ).nonempty({ error: DefaultFormErrors.required }),
     title: z.string().min(1, { error: DefaultFormErrors.required }),
     value: z.string().min(1, { error: DefaultFormErrors.required }),
+    dateStart: z.string(),
     
-    dateStart: z.string().optional(),
+    dateEnd: z.string().optional(),
     installments: z.string().optional(),
     interestRate: z.string().optional(),
     entryValue: z.string().optional()
 }).superRefine((data, ctx) => {
     if (data.types.includes("75679762-aaf6-4393-8113-03a9309f0add")) {
-        if (!data.dateStart) {
+        if (!data.dateEnd) {
         ctx.addIssue({ path: ["startDate"], code: "custom", message: DefaultFormErrors.required })
         }
         if (!data.installments) {

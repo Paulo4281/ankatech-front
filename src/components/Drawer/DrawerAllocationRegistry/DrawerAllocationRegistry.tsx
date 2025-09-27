@@ -8,32 +8,63 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "@/components/ui/drawer"
-import {  Plus, X } from "lucide-react"
+import {  Pencil, Plus, X } from "lucide-react"
 import { useForm, Controller } from "react-hook-form"
-import type { TAllocationRegistry } from "@/types/Allocation/TAllocationRegistry"
+import type { TAllocationRegistryCreate } from "@/types/Allocation/TAllocationRegistry"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { AllocationRegistryValidation } from "@/validators/Allocation/AllocationRegistryValidation"
+import { AllocationRegistryCreateValidation } from "@/validators/Allocation/AllocationRegistryValidation"
 import { Calendar } from "@/components/Calendar/Calendar"
 import { Label } from "@/components/ui/label"
 import { InputCurrency } from "@/components/Input/InputCurrency"
-import { DateUtils } from "@/utils/helpers/DateUtils/DateUtils"
+import { useSaveAllocationRegistry } from "@/services/Allocation/AllocationRegistryService"
+import { Toast } from "@/components/Toast/Toast"
+import { queryClient } from "@/providers/QueryClientProvider"
 
-function DrawerAllocationRegistryComponent() {
-    const form = useForm<TAllocationRegistry>({
-      resolver: zodResolver(AllocationRegistryValidation)
+type TDrawerAllocationRegistryProps = {
+  allocationId: string
+  updateBtn?: boolean
+}
+
+function DrawerAllocationRegistryComponent(
+  {
+    allocationId,
+    updateBtn=true
+  }: TDrawerAllocationRegistryProps
+) {
+    const form = useForm<TAllocationRegistryCreate>({
+      resolver: zodResolver(AllocationRegistryCreateValidation)
     })
 
-    async function handleSubmit(data: TAllocationRegistry) {
-      const formattedDate = DateUtils.formatDate(data.date, "YYYY-MM-DD")
+    const saveAllocationRegistryService = useSaveAllocationRegistry({
+      onSuccess: () => {
+        form.reset()
+        Toast.success("Registro cadastrado com sucesso!")
+        queryClient.invalidateQueries({ queryKey: ["allocation"] })
+      }
+    })
+
+    async function handleSubmit(data: TAllocationRegistryCreate) {
+      data.allocationId = allocationId
+      await saveAllocationRegistryService.mutateAsync(data)
     }
 
     return (
         <>
       <Drawer direction="right">
         <DrawerTrigger asChild>
-            <Button variant="ghost" size="sm">
-                <Plus /> Adicionar novo registro
-            </Button>
+            {
+              updateBtn
+              ?
+              (
+                <Button variant={"orange-outline"}><Pencil /> Atualizar</Button>
+              )
+              :
+              (
+                <Button variant="ghost" size="sm">
+                    <Plus /> Adicionar novo registro
+                </Button>
+              )
+            }
         </DrawerTrigger>
         <DrawerContent>
         <div className="flex justify-between">
@@ -63,9 +94,6 @@ function DrawerAllocationRegistryComponent() {
                         value={field.value as unknown as Date}
                         onChangeValue={field.onChange}
                       />
-                      <div>
-                        {fieldState.error?.message}
-                      </div>
                     </>
                   )}
                 />
@@ -96,7 +124,8 @@ function DrawerAllocationRegistryComponent() {
                   type="submit"
                   variant={"default"}
                   form="form-allocation-registry"
-                >Salvar</Button>
+                  disabled={saveAllocationRegistryService.isPending}
+                >{saveAllocationRegistryService.isPending ? "Salvando..." : "Salvar"}</Button>
             </DrawerFooter>
 
           </div>

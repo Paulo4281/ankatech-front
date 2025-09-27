@@ -14,23 +14,21 @@ import { DrawerAllocation } from "@/components/Drawer/DrawerAllocation/DrawerAll
 import { useState, useEffect } from "react"
 import { useFindAllocation } from "@/services/Allocation/AllocationService"
 import type { TAllocationResponse } from "@/types/Allocation/TAllocation"
-import { useSearchParams } from "next/navigation"
+import { AllocationTypes } from "@/validators/Allocation/AllocationValidator"
 
 export default function Alocacoes() {
-    const searchParams = useSearchParams()
-
-    const allocationTypes = searchParams.get("allocationTypeId") as string
+    const [selectedAllocationTypeId, setSelectedAllocationTypeId] = useState<string>("75679762-aaf6-4393-8113-03a9309f0add,f8248cb3-0cb2-43ca-bd59-f803de603d1c,983b8fee-1957-47a4-8785-8d4e1819137d")
 
     const { data, isLoading, isError } = useFindAllocation({
-        allocationTypeId: allocationTypes
+        filters: {
+            allocationTypeId: selectedAllocationTypeId
+        }
     })
-
 
     const [allocations, setAllocations] = useState<TAllocationResponse[]>([])
 
     useEffect(() => {
         setAllocations(data as TAllocationResponse[])
-        console.log(allocations)
     }, [data])
 
     return (
@@ -58,14 +56,20 @@ export default function Alocacoes() {
                         <div className="flex gap-2">
                             <div className="flex gap-2">
                                 <Label htmlFor="alocacoes" className="text-white">Alocações:</Label>
-                                <Select>
-                                    <SelectTrigger id="alocacoes" className="w-[220px] rounded-3xl !text-white text-lg">
+                                <Select onValueChange={(value) => setSelectedAllocationTypeId(value)}>
+                                    <SelectTrigger
+                                        id="alocacoes"
+                                        className="w-[220px] rounded-3xl !text-white text-lg"
+                                    >
                                         <SelectValue placeholder="Todos" />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        <SelectItem value="todos">Todos</SelectItem>
-                                        <SelectItem value="imobilizado">Imobilizado</SelectItem>
-                                        <SelectItem value="financeira">Financeira Manual</SelectItem>
+                                        <SelectItem value="75679762-aaf6-4393-8113-03a9309f0add,f8248cb3-0cb2-43ca-bd59-f803de603d1c,983b8fee-1957-47a4-8785-8d4e1819137d">Todos</SelectItem>
+                                        {
+                                            AllocationTypes.map((type) => (
+                                                <SelectItem value={type.value}>{type.label}</SelectItem>
+                                            ))
+                                        }
                                     </SelectContent>
                                 </Select>
                             </div>
@@ -81,14 +85,16 @@ export default function Alocacoes() {
                             (
                                 allocations.map((allocation, index) => (
                                     <CardAllocation
+                                        id={allocation.id}
                                         key={allocation.id}
                                         title={allocation.title}
                                         dateStart={allocation.createdAt || ""}
-                                        dateEnd={""}
+                                        dateEnd={allocation.dateEnd || ""}
                                         amount={allocation.value}
-                                        types={allocation.types.map((type) => (type as any)?.allocationType?.name)}
+                                        types={allocation.types.map((type) => (type as any).allocationType?.name)}
                                         canUpdate={true}
                                         lastUpdate={allocation.updatedAt || ""}
+                                        timelineItems={allocation.registries}
                                     />
                                 ))
                             )

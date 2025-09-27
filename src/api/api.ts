@@ -3,6 +3,7 @@ import axios, { AxiosError, AxiosResponse } from "axios"
 
 type TPrefixes =
     "/allocation" |
+    "/allocation-registry" |
     "history"
 
 type TApiParams = {

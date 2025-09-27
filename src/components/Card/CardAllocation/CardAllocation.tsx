@@ -17,12 +17,14 @@ import { DrawerAllocationRegistry } from "@/components/Drawer/DrawerAllocationRe
 import { Collapsible, CollapsibleTrigger, CollapsibleContent } from "@/components/ui/collapsible"
 import { TimelineAllocation } from "@/components/Timeline/TimelineAllocation/TimelineAllocation"
 import { useState } from "react"
-import { DrawerAllocationUpdate } from "@/components/Drawer/DrawerAllocation/DrawerAllocationUpdate"
 import { DateUtils } from "@/utils/helpers/DateUtils/DateUtils"
+import { ValueUtils } from "@/utils/helpers/ValueUtils/ValueUtils"
+import type { TAllocationRegistryResponse } from "@/types/Allocation/TAllocationRegistry"
 
 type AvailableTypes = "Financeira Manual" | "Imobilizada" | "Financeira"
 
 type TCardAllocationProps = {
+    id: string
     title: string
     dateStart: string
     amount: string
@@ -31,6 +33,7 @@ type TCardAllocationProps = {
     canUpdate?: boolean
     lastUpdate?: string
     totalAmount?: string
+    timelineItems?: TAllocationRegistryResponse[]
     progressData?: {
         installments: number
         totalInstallments: number
@@ -51,6 +54,7 @@ const badgeHandler: Record<NonNullable<TCardAllocationProps["types"]>[number], (
 
 function CardAllocationComponent(
     {
+        id,
         title,
         dateStart,
         amount,
@@ -59,12 +63,11 @@ function CardAllocationComponent(
         canUpdate=false,
         lastUpdate="",
         totalAmount="",
-        progressData={ installments: 0, totalInstallments: 0 }
+        progressData={ installments: 0, totalInstallments: 0 },
+        timelineItems=[]
     }: TCardAllocationProps
 ) {
     const [collapsed, setCollapsed] = useState<boolean>(false)
-
-    console.log(dateStart)
 
     return (
         <>
@@ -99,7 +102,7 @@ function CardAllocationComponent(
                                     ?
                                     (
                                         <Description 
-                                            text={`${dateStart} - ${dateEnd}`}
+                                            text={`${DateUtils.formatDate(dateStart)} - ${DateUtils.formatDate(dateEnd)}`}
                                             color="white"
                                             size="extra-sm"
                                         />
@@ -136,25 +139,32 @@ function CardAllocationComponent(
                                 }
                             </div>
                         </div>
-                        <div className="flex gap-5 items-center justify-center">
+                        <div className="flex gap-4 items-center justify-center">
                             {
                                 canUpdate &&
                                 (
-                                    <DrawerAllocationUpdate />
+                                    <DrawerAllocationRegistry
+                                        allocationId={id}
+                                    />
                                 )
                             }
                             <div className="flex flex-col">
                                 <Currency
-                                    amount={amount}
+                                    amount={ValueUtils.centsIntToCurrency(Number(amount))}
                                     amountColor="white"
                                     size="lg"
-                                    symbolColor="white"
+                                    showSymbol={false}                                    
                                 />
-                                <Description
-                                    text={`Última atualização: ${lastUpdate}`}
-                                    color="white"
-                                    size="extra-sm"
-                                />
+                                {
+                                    lastUpdate &&
+                                    (
+                                        <Description
+                                            text={`Última atualização: ${lastUpdate}`}
+                                            color="white"
+                                            size="extra-sm"
+                                        />
+                                    )
+                                }
                             </div>
                             <div>
                                 <DropdownMenu>
@@ -182,7 +192,10 @@ function CardAllocationComponent(
                                             </CollapsibleTrigger>
                                         </DropdownMenuItem>
                                         <DropdownMenuItem asChild>
-                                            <DrawerAllocationRegistry />
+                                            <DrawerAllocationRegistry
+                                                allocationId={id}
+                                                updateBtn={false}
+                                            />
                                         </DropdownMenuItem>
                                     </DropdownMenuContent>
                                 </DropdownMenu>
@@ -191,14 +204,14 @@ function CardAllocationComponent(
                     </div>
                     <div className="text-start">
                         <CollapsibleContent className="mt-4">
-                            <TimelineAllocation
-                                items={[
-                                    {
-                                        amount: "500",
-                                        date: "01/01/2023"
-                                    }
-                                ]}
-                            />
+                            {
+                                timelineItems.length > 0 &&
+                                (
+                                    <TimelineAllocation
+                                        items={timelineItems}
+                                    />
+                                )
+                            }
                         </CollapsibleContent>
                     </div>
                 </div>

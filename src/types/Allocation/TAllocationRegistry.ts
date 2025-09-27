@@ -1,14 +1,17 @@
 import { z } from "zod"
-import { AllocationRegistryValidation } from "@/validators/Allocation/AllocationRegistryValidation"
+import { AllocationRegistryCreateValidation, AllocationRegistryUpdateValidation } from "@/validators/Allocation/AllocationRegistryValidation"
 
-type TAllocationRegistry = z.infer<typeof AllocationRegistryValidation>
+type TAllocationRegistryCreate = z.infer<typeof AllocationRegistryCreateValidation>
 
-type TAllocationRegistryFind = TAllocationRegistry & {
+type TAllocationRegistryResponse = TAllocationRegistryCreate & {
     id: string
     createdAt: string
 }
 
+type TAllocationRegistryUpdate = z.infer<typeof AllocationRegistryUpdateValidation>
+
 export type {
-    TAllocationRegistry,
-    TAllocationRegistryFind
+    TAllocationRegistryCreate,
+    TAllocationRegistryResponse,
+    TAllocationRegistryUpdate
 }
