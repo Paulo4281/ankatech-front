@@ -5,7 +5,8 @@ type TPrefixes =
     "/allocation" |
     "/allocation-registry" |
     "/family-member" |
-    "history"
+    "/movement" |
+    "/history"
 
 type TApiParams = {
     prefix: TPrefixes

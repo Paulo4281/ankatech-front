@@ -3,7 +3,7 @@ import { AllocationRegistryCreateValidation, AllocationRegistryUpdateValidation 
 
 type TAllocationRegistryCreate = z.infer<typeof AllocationRegistryCreateValidation>
 
-type TAllocationRegistryResponse = TAllocationRegistryCreate & {
+type TAllocationRegistryResponse = Required<TAllocationRegistryCreate> & {
     id: string
     createdAt: string
 }

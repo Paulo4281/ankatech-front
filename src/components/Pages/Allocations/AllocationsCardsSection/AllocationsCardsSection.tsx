@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { useFindAllocation } from "@/services/Allocation/AllocationService"
 import { TAllocationResponse } from "@/types/Allocation/TAllocation"
-import { AllocationTypes } from "@/validators/Allocation/AllocationValidator"
+import { AllocationTypes } from "@/validators/Allocation/AllocationValidation"
 import { useEffect, useState } from "react"
 import { useFamilyMemberStore } from "@/stores/FamilyMember/FamilyMemberStore"
 

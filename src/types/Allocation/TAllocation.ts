@@ -1,11 +1,11 @@
 import { z } from "zod"
-import { AllocationCreateValidator } from "@/validators/Allocation/AllocationValidator"
+import { AllocationCreateValidation } from "@/validators/Allocation/AllocationValidation"
 import { TAllocationType } from "./TAllocationType"
 import { TAllocationRegistryResponse } from "./TAllocationRegistry"
 
-type TAllocation = z.infer<typeof AllocationCreateValidator>
+type TAllocationCreate = z.infer<typeof AllocationCreateValidation>
 
-type TAllocationResponse = TAllocation & {
+type TAllocationResponse = Required<TAllocationCreate> & {
     id: string
     updatedAt: string
     createdAt: string
@@ -18,7 +18,7 @@ type TAllocationFindParams = {
 }
 
 export type {
-    TAllocation,
+    TAllocationCreate,
     TAllocationResponse,
     TAllocationFindParams,
 }

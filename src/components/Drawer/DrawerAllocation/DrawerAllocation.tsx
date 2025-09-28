@@ -1,19 +1,11 @@
 "use client"
 
 import { Button } from "@/components/ui/button"
-import {
-  Drawer,
-  DrawerClose,
-  DrawerContent,
-  DrawerFooter,
-  DrawerHeader,
-  DrawerTitle,
-  DrawerTrigger,
-} from "@/components/ui/drawer"
-import {  Plus, X } from "lucide-react"
+import { Drawer } from "../Drawer"
+import { Plus } from "lucide-react"
 import { useForm, Controller } from "react-hook-form"
-import type { TAllocation } from "@/types/Allocation/TAllocation"
-import { AllocationCreateValidator, AllocationTypes } from "@/validators/Allocation/AllocationValidator"
+import type { TAllocationCreate } from "@/types/Allocation/TAllocation"
+import { AllocationCreateValidation, AllocationTypes } from "@/validators/Allocation/AllocationValidation"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Select, SelectTrigger, SelectValue, SelectContent } from "@/components/ui/select"
 import { Input } from "@/components/ui/input"
@@ -26,8 +18,8 @@ import { Toast } from "@/components/Toast/Toast"
 import { useFamilyMemberStore } from "@/stores/FamilyMember/FamilyMemberStore"
 
 function DrawerAllocationComponent() {
-    const form = useForm<TAllocation>({
-        resolver: zodResolver(AllocationCreateValidator)
+    const form = useForm<TAllocationCreate>({
+        resolver: zodResolver(AllocationCreateValidation)
     })
 
     const { familyMember } = useFamilyMemberStore()
@@ -40,7 +32,7 @@ function DrawerAllocationComponent() {
         }
     })
 
-    async function handleSubmit(data: TAllocation) {
+    async function handleSubmit(data: TAllocationCreate) {
         data.familyMemberId = familyMember?.id
         await saveAllocationService.mutateAsync(data)
     }
@@ -49,22 +41,11 @@ function DrawerAllocationComponent() {
 
     return (
         <>
-        <Drawer direction="right">
-            <DrawerTrigger asChild>
-                <Button variant={"orange"}><Plus /> Adicionar</Button>
-            </DrawerTrigger>
-            <DrawerContent>
-            <div className="flex justify-between">
-                <DrawerHeader>
-                <DrawerTitle className="text-2xl">Adicionar Alocação</DrawerTitle>
-                </DrawerHeader>
-                <DrawerClose asChild className="my-2 mx-2">
-                    <Button variant={"ghost"} size="icon"><X /></Button>
-                </DrawerClose>
-            </div>
-
-            <div className="h-full w-full p-3">
-
+        <Drawer
+            trigger={<Button variant={"secondary"}><Plus /> Adicionar</Button>}
+            headerTitle="Adicionar Alocação"
+            children={
+                (
                 <form
                     id="form-allocation"
                     onSubmit={form.handleSubmit(handleSubmit)}
@@ -242,19 +223,19 @@ function DrawerAllocationComponent() {
                 }
 
                 </form>
-
-                <DrawerFooter>
+                )
+            }
+            footerChildren={
+                (
                     <Button
                         type="submit"
                         variant={"default"}
                         form="form-allocation"
                         disabled={saveAllocationService.isPending}
                     >{ saveAllocationService.isPending ? "Salvando..." : "Salvar" }</Button>
-                </DrawerFooter>
-
-            </div>
-            </DrawerContent>
-        </Drawer>
+                )
+            }
+        />
         </>
     )
 }

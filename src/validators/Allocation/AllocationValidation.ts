@@ -16,7 +16,7 @@ const AllocationTypes = [
     }
 ]
 
-const AllocationCreateValidator = z.object({
+const AllocationCreateValidation = z.object({
     types: z.array(
         z.enum(
             AllocationTypes.map((type) => type.value)
@@ -50,6 +50,6 @@ const AllocationCreateValidator = z.object({
 
 
 export {
-    AllocationCreateValidator,
+    AllocationCreateValidation,
     AllocationTypes
 }

@@ -1,12 +1,17 @@
 import { Description } from "@/components/Description/Description"
 import { ChevronDown, ChevronUp } from "lucide-react"
+import type { TMovementTypes, TMovementFrequencies, TMovementCategories } from "@/types/Movement/TMovement"
+import { ValueUtils } from "@/utils/helpers/ValueUtils/ValueUtils"
+import { Currency } from "@/components/Currency/Currency"
+import { DateUtils } from "@/utils/helpers/DateUtils/DateUtils"
 
 type TCardMovementProps = {
     title: string
-    type: "earning" | "expense"
+    value: number
+    type: TMovementTypes
     viewMode: "original-plan" | "custom-plan"
-    category: "credit" | "dependent" | "fixed"
-    frequency: "unique" | "monthly" | "annually"
+    category: TMovementCategories
+    frequency: TMovementFrequencies
     dateStart: string
     dateEnd?: string
 }
@@ -14,7 +19,7 @@ type TCardMovementProps = {
 const frequencyNameHandler: Record<TCardMovementProps["frequency"], string> = {
     unique: "Única",
     monthly: "Mensal",
-    annually: "Anual"
+    yearly: "Anual"
 }
 
 const categoryNameHandler: Record<TCardMovementProps["category"], string> = {
@@ -26,6 +31,7 @@ const categoryNameHandler: Record<TCardMovementProps["category"], string> = {
 function CardMovementComponent(
     {
         title,
+        value,
         type,
         viewMode,
         category,
@@ -49,7 +55,7 @@ function CardMovementComponent(
                 </div>
                 <div>
                     <Description
-                        text={`${dateStart}${ dateEnd ? ` - ${dateEnd}` : ""}`}
+                        text={`${DateUtils.formatDate(dateStart)}${ dateEnd ? ` - ${DateUtils.formatDate(dateEnd)}` : ""}`}
                         color="white"
                         size="sm"
                     />
@@ -76,10 +82,11 @@ function CardMovementComponent(
                             (
                                 <div className="flex gap-1 text-green-500">
                                     <ChevronUp className="h-8 w-8" />
-                                    <Description
-                                        text={`R$ 1.000,00`}
-                                        color="green"
+                                    <Currency
+                                        amount={`${ValueUtils.centsIntToCurrency(value)}`}
+                                        amountColor="green"
                                         size="md"
+                                        showSymbol={false}
                                     />
                                 </div>
                             )
@@ -87,10 +94,11 @@ function CardMovementComponent(
                             (
                                 <div className="flex gap-1 text-red-500">
                                     <ChevronDown className="h-8 w-8" />
-                                    <Description
-                                        text={`R$ 1.000,00`}
-                                        color="red"
-                                        size="sm"
+                                    <Currency
+                                        amount={`${ValueUtils.centsIntToCurrency(value)}`}
+                                        amountColor="red"
+                                        size="md"
+                                        showSymbol={false}
                                     />
                                 </div>
                             )
