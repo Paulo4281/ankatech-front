@@ -9,6 +9,10 @@ export class DateUtils {
         return moment(date).utc().startOf("day").add(12, "hours").toDate()
     }
 
+    static getYear(date: Date): number {
+        return moment(date).year()
+    }
+
     static howMuchTimeFromToXMonths(date: Date, months: number): Date {
         return moment(date).add(months, "months").toDate()
     }

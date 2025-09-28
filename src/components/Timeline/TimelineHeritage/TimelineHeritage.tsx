@@ -1,106 +1,161 @@
-import { Currency } from "@/components/Currency/Currency"
+"use client"
+
+import { Description } from "@/components/Description/Description"
 import { ValueUtils } from "@/utils/helpers/ValueUtils/ValueUtils"
+import { DateUtils } from "@/utils/helpers/DateUtils/DateUtils"
+import { useFindMovement } from "@/services/Movement/MovementService"
+import { useState, useEffect } from "react"
+import type { TMovementResponse } from "@/types/Movement/TMovement"
+import { useFamilyMemberStore } from "@/stores/FamilyMember/FamilyMemberStore"
 
 type TWageEvent = {
-    title: string
-    amount: number
+  title: string
+  value: number
+  year: number
 }
 
 type TExpenseEvent = {
-    amount: number
+  value: number
+  year: number
+}
+
+type TCustomEvent = {
+  year: number
+  content: React.ReactNode
 }
 
 function TimelineHeritageComponent() {
-    const wageEvents: TWageEvent[] = [
-        {
-            title: "Janeiro",
-            amount: 1000
-        },
-        {
-            title: "Fevereiro",
-            amount: 2000
-        }
-    ]
 
-    const expenseEvents: TExpenseEvent[] = [
-        {
-            amount: 500
-        }
-    ]
+    const { familyMember } = useFamilyMemberStore()
 
-    return (
-        <>
-        <div>
+    const { data } = useFindMovement({
+      filters: {
+        class: "financial,fixed",
+        familyMemberId: familyMember?.id as string
+      }
+    })
 
+    const [movements, setMovements] = useState<TMovementResponse[]>([])
 
-        <div className="relative flex items-center space-x-12">
-            <div className="absolute top-6 left-0 ms-14 w-full h-0.5 bg-gray-300 z-0"></div>
+    useEffect(() => {
+      if (data) {
+        setMovements(data)
+      }
+    }, [data])
 
-            <span className="relative z-10 -mt-1 text-green-400 text-sm">Salário</span>
+    const startYear = 2025
+    const endYear = 2060
+    const startAge = 45
+    const ageStep = 5
 
-            {
-                wageEvents.length > 0 &&
-                (
-                    wageEvents.map((wageEvent) => (
-                        <div key={wageEvent.title} className="relative z-10 flex flex-col items-center">
-                            <p className="text-green-400 text-center mb-6 -mt-1.5 text-sm">{wageEvent.title} {ValueUtils.centsIntToCurrency(wageEvent.amount)}</p>
-                            <div className="w-6 h-6 bg-green-400 rounded-full border-2 border-gray-900 mt-3.5 absolute"></div>
-                            <div className="flex flex-col items-center space-y-1"></div>
-                        </div>
-                    ))
-                )
-            }
-            
-        </div>
-
-        <div className="relative flex items-center space-x-12">
-            <div className="flex flex-col gap-1">
-                <span className="relative z-10 -mt-1 text-white text-sm">Ano</span>
-                <span className="relative z-10 -mt-1 text-white text-sm">Idade</span>
-            </div>
-            <div className="absolute top-6 left-0 w-full h-0 bg-gray-300 z-0"></div>
-
-            <div className="relative z-10 flex flex-col items-center">
-                <div className="flex flex-col items-center space-y-1">
-                    <span className="text-sm text-gray-400">2025</span>
-                    <span className="text-sm text-gray-400">18 anos</span>
-                </div>
-            </div>
-        </div>
-
-        <div className="relative flex items-center space-x-12">
-            <div className="absolute top-6 left-0 ms-14 w-full h-0.5 bg-gray-300 z-0"></div>
-
-            <span className="relative z-10 -mt-1 text-red-400 text-sm">Custo<br />de vida</span>
-
-            {
-                expenseEvents.length > 0 &&
-                (
-                    expenseEvents.map((expenseEvent) => (
-                        <div key={expenseEvent.amount} className="relative z-10 flex flex-col items-center">
-                            <div className="w-6 h-6 bg-red-400 rounded-full border-2 border-gray-900 mt-2 absolute"></div>
-                            <div className="text-red-400 text-center mt-8 text-sm">
-                                {
-                                    <Currency
-                                        amount={ValueUtils.centsIntToCurrency(expenseEvent.amount)}
-                                        amountColor="red"
-                                        size="extra-sm"
-                                        showSymbol={false}
-                                    />
-                                }
-                            </div>
-                            <div className="flex flex-col items-center space-y-1"></div>
-                        </div>
-                    ))
-                )
-            }
-
-        </div>
-
-
-        </div>
-        </>
+    const years = Array.from(
+      { length: Math.floor((endYear - startYear) / ageStep) + 1 },
+      (_, i) => startYear + i * ageStep
     )
+
+    const ages = Array.from(
+      { length: years.length },
+      (_, i) => startAge + i * ageStep
+    )
+
+    function snapToClosestYear(eventYear: number, years: number[]): number {
+      return years.reduce((prev, current) => Math.abs(current - eventYear) < Math.abs(prev - eventYear) ? current : prev)
+    }
+
+    const wageEvents: TWageEvent[] = movements?.filter((movement) => movement.type === "earning")
+    ?.map((movement) => ({
+      title: movement.title,
+      value: Number(movement.value),
+      year: snapToClosestYear(DateUtils.getYear(new Date(movement.dateStart)), years)
+    })) ?? []
+
+    const expenseEvents: TExpenseEvent[] = movements?.filter((movement) => movement.type === "expense")
+    ?.map((movement) => ({
+      value: Number(movement.value),
+      year: snapToClosestYear(DateUtils.getYear(new Date(movement.dateStart)), years)
+    })) ?? []
+
+    const customEvents: TCustomEvent[] = [
+        {
+            year: 2045,
+            content: <Description text="Aposetadoria" color="bright-gray" size="sm" />
+        },
+    ]
+
+  return (
+    <div className="relative p-6 overflow-x-auto">
+      <div className="relative flex items-center space-x-12 mb-10">
+        <div className="absolute top-8 left-0 w-full h-0.5 bg-gray-300 z-0" />
+        <span className="relative z-10 -mt-10 text-green-400 text-sm">Salário</span>
+
+        {years.map((year) => {
+            const eventsThisYear = wageEvents.filter((event) => event.year === year)
+            return (
+            <div key={year} className="relative z-10 flex flex-col items-center flex-1 space-y-1 text-center">
+                {eventsThisYear.map((event) => (
+                    <>
+                        <Description text={`${event.title} ${ValueUtils.centsIntToCurrency(event.value || 0)}`} color="green" size="extra-sm" />
+                        <div className="w-3 h-3 bg-green-400 rounded-full border-2 border-gray-900 mt-1" />
+                    </>
+                ))}
+            </div>
+            )
+        })}
+      </div>
+
+      <div className="relative flex items-center space-x-12 mb-10">
+        <div className="flex flex-col gap-1 mr-4">
+          <span className="text-white text-sm">Ano</span>
+          <span className="text-white text-sm">Idade</span>
+        </div>
+
+        <div className="relative flex-1 flex">
+          <div className="absolute top-6 left-0 w-full h-0.5 bg-gray-300 z-0" />
+          {years.map((year, idx) => (
+            <div
+              key={year}
+              id={`year-${year}`}
+              className="relative z-10 flex flex-col items-center flex-1"
+            >
+              <div className="flex flex-col items-center space-y-2">
+                <span className="text-sm text-gray-400">{year}</span>
+                <span className="text-sm text-gray-400">{ages[idx]} anos</span>
+              </div>
+              {customEvents
+                .filter((e) => e.year === year)
+                .map((e, i) => (
+                  <div
+                    key={i}
+                    className="absolute -top-10 flex flex-col items-center"
+                  >
+                    {e.content}
+                  </div>
+                ))}
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="relative flex items-center space-x-12">
+        <div className="absolute top-10 left-0 w-full h-0.5 bg-gray-300 z-0" />
+        <span className="relative z-10 -mt-1 text-red-400 text-sm">Custo<br />de vida</span>
+
+        {years.map((year) => {
+            const eventsThisYear = expenseEvents.filter((event) => event.year === year)
+            return (
+            <div key={year} className="relative z-10 flex flex-col items-center flex-1 space-y-1">
+                {eventsThisYear.map((event) => (
+                    <>
+                        <Description text={`${ValueUtils.centsIntToCurrency(event.value || 0)}`} color="red" size="extra-sm" />
+                        <div className="w-3 h-3 bg-red-400 rounded-full border-2 border-gray-900 mt-1" />
+                    </>
+                ))}
+            </div>
+            )
+        })}
+      </div>
+    </div>
+  )
 }
 
 export {

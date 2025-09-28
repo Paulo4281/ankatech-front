@@ -9,6 +9,9 @@ import { DateUtils } from "@/utils/helpers/DateUtils/DateUtils"
 import { DropdownMenuTrigger } from "@radix-ui/react-dropdown-menu"
 import { Circle, EllipsisVertical, Plus } from "lucide-react"
 import { CartesianGrid, Line, LineChart, Tooltip, XAxis, YAxis } from "recharts"
+import { useState } from "react"
+
+type TPlanTypes = "original" | "custom" | "done"
 
 type THeritageChartProps = {
 
@@ -20,6 +23,8 @@ function HeritageChartComponent(
     }: THeritageChartProps
 ) {
 
+    const [selectedPlan, setSelectedPlan] = useState<TPlanTypes>("original")
+
     const chartData = [
       { year: "2025", original: 5, current: 10, done: 10 },
       { year: "2030", original: 10, current: 12, done: 12 },
@@ -27,6 +32,8 @@ function HeritageChartComponent(
       { year: "2040", original: 18, current: 18, },
       { year: "2045", original: 22, current: 19, },
       { year: "2050", original: 27, current: 19, },
+      { year: "2055", original: 28, current: 22 },
+      { year: "2060", original: 30, current: 25 }
     ]
     const chartConfig = {
       original: {
@@ -86,7 +93,7 @@ function HeritageChartComponent(
                 <Line
                   type="monotone"
                   dataKey="done"
-                  stroke="#ffdf20"
+                  stroke="#ffb86a"
                   strokeWidth={3}
                   dot={{ r: 4 }}
                 />
@@ -96,8 +103,8 @@ function HeritageChartComponent(
 
             <div className="mt-4 flex gap-3 justify-center">
               <div className="relative">
-                <Button variant="outline-blue" className="flex items-center gap-2">
-                  <Circle /> Plano original
+                <Button variant="outline-blue" onClick={() => setSelectedPlan("original")} className="flex items-center gap-2">
+                  <Circle className={`${ selectedPlan === "original" ? "text-blue-300 fill-blue-300" : "" }`} /> Plano original
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                       <Button variant="ghost" size="icon">
@@ -114,8 +121,8 @@ function HeritageChartComponent(
               </div>
 
               <div className="relative">
-                <Button variant="outline-green" className="flex items-center gap-2">
-                  <Circle /> Situação atual { DateUtils.formatDate(new Date()) }
+                <Button variant="outline-green" onClick={() => setSelectedPlan("custom")} className="flex items-center gap-2">
+                  <Circle className={`${ selectedPlan === "custom" ? "text-green-300 fill-green-300" : "" }`} /> Situação atual { DateUtils.formatDate(new Date()) }
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                       <Button variant="ghost" size="icon">
@@ -131,7 +138,7 @@ function HeritageChartComponent(
                 </Button>
               </div>
 
-                <Button variant="outline-yellow" className="flex items-center gap-2">
+                <Button variant={`${ selectedPlan === "done" ? "yellow" : "outline-yellow" }`} onClick={() => setSelectedPlan("done")} className="flex items-center gap-2">
                   Realizado
                 </Button>
                 <Button variant="secondary-outline" className="flex items-center gap-2">

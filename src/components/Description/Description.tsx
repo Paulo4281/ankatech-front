@@ -15,7 +15,7 @@ const colorHandler: Record<TDescriptionProps["color"], string> = {
 }
 
 const sizeHandler: Record<TDescriptionProps["size"], string> = {
-    "extra-sm": "text-sm",
+    "extra-sm": "text-[12.5px]",
     sm: "text-md",
     md: "text-lg",
     lg: "text-2xl",
