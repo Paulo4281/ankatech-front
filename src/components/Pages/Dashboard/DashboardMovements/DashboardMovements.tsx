@@ -25,7 +25,6 @@ function DashboardMovementsComponent() {
     useEffect(() => {
         if (data) {
             setMovements(data)
-            console.log(data)
         }
     }, [data])
 
@@ -50,7 +49,8 @@ function DashboardMovementsComponent() {
 
             <div className="grid grid-cols-2 gap-3">
                 {
-                    movements?.length > 0 &&
+                    movements?.length > 0
+                    ?
                     (
                         movements.map((movement) => (
                             <CardMovement
@@ -65,6 +65,10 @@ function DashboardMovementsComponent() {
                                 frequency={movement.frequency}
                             />
                         ))
+                    )
+                    :
+                    (
+                        <h1 className="text-2xl text-white">Sem movimentações</h1>
                     )
                 }
             </div>

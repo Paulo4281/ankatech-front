@@ -56,14 +56,14 @@ function CardMovementComponent(
                 <div>
                     <Description
                         text={`${DateUtils.formatDate(dateStart)}${ dateEnd ? ` - ${DateUtils.formatDate(dateEnd)}` : ""}`}
-                        color="white"
+                        color="bright-gray"
                         size="sm"
                     />
                 </div>
                 <div>
                     <Description
                         text={`Frequência: ${frequencyNameHandler[frequency]}`}
-                        color="white"
+                        color="bright-gray"
                         size="sm"
                     />
                 </div>
@@ -71,7 +71,7 @@ function CardMovementComponent(
                     <div>
                         <Description
                             text={categoryNameHandler[category]}
-                            color="white"
+                            color="bright-gray"
                             size="sm"
                         />
                     </div>

@@ -8,4 +8,24 @@ export class DateUtils {
     static formatToUTC(date: Date): Date {
         return moment(date).utc().startOf("day").add(12, "hours").toDate()
     }
+
+    static howMuchTimeFromToXMonths(date: Date, months: number): Date {
+        return moment(date).add(months, "months").toDate()
+    }
+
+    static formatDuration(months: number): string {
+        if (months < 12) {
+            return `${months} ${months === 1 ? "mês" : "meses"}`
+        }
+
+        const years = Math.floor(months / 12)
+        const restMonths = months % 12
+
+        if (restMonths === 0) {
+            return `${years} ${years === 1 ? "ano" : "anos"}`
+        }
+
+        return `${years} ${years === 1 ? "ano" : "anos"} e ${restMonths} ${restMonths === 1 ? "mês" : "meses"}`
+    }
+
 }

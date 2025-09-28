@@ -6,6 +6,7 @@ type TPrefixes =
     "/allocation-registry" |
     "/family-member" |
     "/movement" |
+    "/insurance" |
     "/history"
 
 type TApiParams = {
