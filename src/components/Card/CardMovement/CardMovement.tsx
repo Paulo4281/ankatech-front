@@ -9,7 +9,7 @@ type TCardMovementProps = {
     title: string
     value: number
     type: TMovementTypes
-    viewMode: "original-plan" | "custom-plan"
+    viewMode: "original" | "current" | "done"
     category: TMovementCategories
     frequency: TMovementFrequencies
     dateStart: string
@@ -28,6 +28,12 @@ const categoryNameHandler: Record<TCardMovementProps["category"], string> = {
     fixed: "Imobilizado"
 }
 
+const viewModeColorHandler: Record<TCardMovementProps["viewMode"], string> = {
+    original: "border-blue-300",
+    current: "border-green-300",
+    done: "border-orange-300"
+}
+
 function CardMovementComponent(
     {
         title,
@@ -43,7 +49,7 @@ function CardMovementComponent(
     return (
         <>
         <div
-            className={`h-[180px] w-full bg-gray-800 rounded-2xl p-4 border-2 ${ viewMode === "original-plan" ? "border-blue-300" : "border-green-300" }`}
+            className={`h-[180px] w-full bg-gray-800 rounded-2xl p-4 border-2 ${viewModeColorHandler[viewMode]}`}
         >
             <div className="flex flex-col gap-2">
                 <div>

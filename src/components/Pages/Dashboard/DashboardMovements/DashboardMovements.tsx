@@ -8,9 +8,11 @@ import { useFamilyMemberStore } from "@/stores/FamilyMember/FamilyMemberStore"
 import { useState, useEffect } from "react"
 import type { TMovementResponse, TMovementClasses } from "@/types/Movement/TMovement"
 import { queryClient } from "@/providers/QueryClientProvider"
+import { useHeritageChartSimulationStore } from "@/stores/HeritageChartSimulation/HeritageChartSimulationStore"
 
 function DashboardMovementsComponent() {
     const { familyMember } = useFamilyMemberStore()
+    const { simulation } = useHeritageChartSimulationStore()
 
     const [movements, setMovements] = useState<TMovementResponse[]>([])
     const [selectedClass, setSelectedClass] = useState<TMovementClasses>("financial")
@@ -59,7 +61,7 @@ function DashboardMovementsComponent() {
                                 value={Number(movement.value)}
                                 dateStart={movement.dateStart}
                                 dateEnd={movement.dateEnd}
-                                viewMode="original-plan"
+                                viewMode={simulation?.selected || "original"}
                                 type={movement.type}
                                 category={movement.category}
                                 frequency={movement.frequency}

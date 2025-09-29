@@ -9,21 +9,55 @@ import { DateUtils } from "@/utils/helpers/DateUtils/DateUtils"
 import { DropdownMenuTrigger } from "@radix-ui/react-dropdown-menu"
 import { Circle, EllipsisVertical, Plus } from "lucide-react"
 import { CartesianGrid, Line, LineChart, Tooltip, XAxis, YAxis } from "recharts"
-import { useState } from "react"
+import { useState, useEffect } from "react"
+import { useFamilyMemberStore } from "@/stores/FamilyMember/FamilyMemberStore"
+import { useFindSimulation } from "@/services/Simulation/SimulationService"
+import { TSimulationResponse } from "@/types/Simulation/TSimulation"
+import { useHeritageChartSimulationStore } from "@/stores/HeritageChartSimulation/HeritageChartSimulationStore"
+import { DrawerPlanDuplicate } from "@/components/Drawer/DrawerPlan/DrawerPlan"
+import { DrawerPlanUpdate } from "@/components/Drawer/DrawerPlan/DrawerPlanUpdate"
+import { ModalConfirmation } from "@/components/Modal/ModalConfirmation/ModalConfirmation"
 
-type TPlanTypes = "original" | "custom" | "done"
+type TPlanTypes = "original" | "current" | "done"
 
-type THeritageChartProps = {
+type TStatusTypes = "alive" | "dead"
 
-}
+function HeritageChartComponent() {
 
-function HeritageChartComponent(
-    {
+    const [selectedStatus, setSelectedStatus] = useState<TStatusTypes>("alive")
 
-    }: THeritageChartProps
-) {
+    const { simulation, setSimulation } = useHeritageChartSimulationStore()
+
+    console.log(simulation)
 
     const [selectedPlan, setSelectedPlan] = useState<TPlanTypes>("original")
+    const [simulationData, setSimulationData] = useState<TSimulationResponse>({} as TSimulationResponse)
+
+    const [openedDeleteModal, setOpenedDeleteModal] = useState<boolean>(false)
+
+    const { familyMember } = useFamilyMemberStore()
+
+    const { data: simulationDataResponse } = useFindSimulation({
+      filters: {
+        id: simulation?.id as string,
+        familyMemberId: familyMember?.id as string,
+        status: selectedStatus
+      },
+      enabled: simulation?.id ? true : false
+    })
+
+    useEffect(() => {
+      if (simulation) {
+        setSimulation({ ...simulation, selected: selectedPlan })
+      }
+    }, [selectedPlan])
+
+    useEffect(() => {
+      if (simulationDataResponse) {
+        setSimulationData(simulationDataResponse)
+        setSimulation({ ...simulationDataResponse, selected: selectedPlan })
+      }
+    }, [simulationDataResponse])
 
     const chartData = [
       { year: "2025", original: 5, current: 10, done: 10 },
@@ -107,32 +141,42 @@ function HeritageChartComponent(
                   <Circle className={`${ selectedPlan === "original" ? "text-blue-300 fill-blue-300" : "" }`} /> Plano original
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" size="icon">
+                      <Button variant="secondary-outline" size="icon">
                         <EllipsisVertical />
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
-                      <DropdownMenuItem onClick={() => console.log("Opção 1")}>Editar</DropdownMenuItem>
-                      <DropdownMenuItem onClick={({}) => console.log("Opção 2")}>Criar nova versão</DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => console.log("Opção 3")}>Deletar</DropdownMenuItem>
+
+                    <div className="flex flex-col items-center">
+                      <DropdownMenuItem asChild>
+                        <DrawerPlanUpdate />
+                      </DropdownMenuItem>
+                      <DropdownMenuItem asChild>
+                        <DrawerPlanDuplicate />
+                      </DropdownMenuItem>
+                      <DropdownMenuItem asChild>
+                        <Button variant={"ghost"} onClick={() => setOpenedDeleteModal(true)}>Deletar</Button>
+                      </DropdownMenuItem>
+                    </div>
+
                     </DropdownMenuContent>
                   </DropdownMenu>
                 </Button>
               </div>
 
               <div className="relative">
-                <Button variant="outline-green" onClick={() => setSelectedPlan("custom")} className="flex items-center gap-2">
-                  <Circle className={`${ selectedPlan === "custom" ? "text-green-300 fill-green-300" : "" }`} /> Situação atual { DateUtils.formatDate(new Date()) }
+                <Button variant="outline-green" onClick={() => setSelectedPlan("current")} className="flex items-center gap-2">
+                  <Circle className={`${ selectedPlan === "current" ? "text-green-300 fill-green-300" : "" }`} /> Situação atual { DateUtils.formatDate(new Date()) }
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" size="icon">
+                      <Button variant="secondary-outline" size="icon">
                         <EllipsisVertical />
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
-                      <DropdownMenuItem onClick={() => console.log("Opção 1")}>Editar</DropdownMenuItem>
-                      <DropdownMenuItem onClick={({}) => console.log("Opção 2")}>Criar nova versão</DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => console.log("Opção 3")}>Deletar</DropdownMenuItem>
+                      <div className="p-2 text-sm">
+                        Não é possível realizar alterações nesta situação
+                      </div>
                     </DropdownMenuContent>
                   </DropdownMenu>
                 </Button>
@@ -146,10 +190,19 @@ function HeritageChartComponent(
                 </Button>
             </div>
 
+            <ModalConfirmation
+              onAccept={() => console.log("accepted!")}
+              opened={openedDeleteModal}
+              onOpenChange={setOpenedDeleteModal}
+            />
         </>
     )
 }
 
 export {
     HeritageChartComponent as HeritageChart
+}
+
+export type {
+  TPlanTypes
 }

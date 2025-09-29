@@ -16,7 +16,7 @@ function AllocationsCardsSectionComponent() {
 
     const { familyMember } = useFamilyMemberStore()
 
-    const { data, isLoading, isError } = useFindAllocation({
+    const { data } = useFindAllocation({
         filters: {
             allocationTypeId: selectedAllocationTypeId,
             familyMemberId: familyMember?.id as string

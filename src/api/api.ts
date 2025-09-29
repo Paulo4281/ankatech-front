@@ -7,6 +7,7 @@ type TPrefixes =
     "/family-member" |
     "/movement" |
     "/insurance" |
+    "/simulation" |
     "/history"
 
 type TApiParams = {

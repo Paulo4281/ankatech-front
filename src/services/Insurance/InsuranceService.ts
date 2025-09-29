@@ -25,7 +25,7 @@ class InsuranceService {
 }
 
 function useSaveInsurance(params?: TServiceProps) {
-    return useMutationHook<TInsuranceCreate, TInsuranceResponse>({
+    return useMutationHook<TInsuranceCreate, void>({
         mutationFn: (data: TInsuranceCreate) => InsuranceService.saveInsuranceRoute(data),
         onSuccess: params?.onSuccess
     })
