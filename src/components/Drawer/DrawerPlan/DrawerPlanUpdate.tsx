@@ -41,7 +41,7 @@ function DrawerPlanUpdateComponent() {
 
         const simulationResponse = await updateSimulationService.mutateAsync(data)
         setSimulation(simulationResponse)
-        queryClient.invalidateQueries({ queryKey: ["simulation"] })
+        queryClient.invalidateQueries()
     }
 
     return (

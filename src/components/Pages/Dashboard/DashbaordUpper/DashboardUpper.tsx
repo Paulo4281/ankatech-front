@@ -14,6 +14,7 @@ import { useFindMovement } from "@/services/Movement/MovementService"
 import type { TMovementResponse } from "@/types/Movement/TMovement"
 import { ValueUtils } from "@/utils/helpers/ValueUtils/ValueUtils"
 import { DateUtils } from "@/utils/helpers/DateUtils/DateUtils"
+import { useHeritageChartSimulationStore } from "@/stores/HeritageChartSimulation/HeritageChartSimulationStore"
 
 type TMovementHandler = {
   type: "earning" | "expense",
@@ -30,6 +31,8 @@ function DashboardUpperComponent() {
     })
 
     const { familyMember, setFamilyMember } = useFamilyMemberStore()
+
+    const { simulation } = useHeritageChartSimulationStore()
 
     const [familyMembers, setFamilyMembers] = useState<TFamilyMemberResponse[]>([])
     const [movements, setMovements] = useState<TMovementResponse[]>([])
@@ -145,15 +148,18 @@ function DashboardUpperComponent() {
       })
     })
 
-    const currentAgeAchieved = ValueUtils.calculatePlanProgress(20000, totalInUniqueMovements)
-    const age55Expectation = ValueUtils.calculatePlanProgress(100000, totalMonthlyAndYearlyUntil2035)
-    const age65Expectation = ValueUtils.calculatePlanProgress(250000, totalMonthlyAndYearlyUntil2045)
+    totalMonthlyAndYearlyUntil2035 += totalInUniqueMovements
+    totalMonthlyAndYearlyUntil2045 += totalInUniqueMovements
+
+    const currentAgeAchieved = ValueUtils.calculatePlanProgress((simulation?.chartInfo?.[2030]?.original! / 5) as number, totalInUniqueMovements)
+    const age55Expectation = ValueUtils.calculatePlanProgress(simulation?.chartInfo?.[2035]?.original as number, (totalMonthlyAndYearlyUntil2035 + totalInUniqueMovements))
+    const age65Expectation = ValueUtils.calculatePlanProgress(simulation?.chartInfo?.[2045]?.original as number, (totalMonthlyAndYearlyUntil2045 + totalInUniqueMovements))
 
     const totalMonthlyEarningVsExpense = totalInMonthlyAndYearlyEarnings - totalInMonthlyAndYearlyExpenses
     const monthlyPercentageGaining = ValueUtils.howMuchPercentage(totalMonthlyEarningVsExpense, 5000)
 
-    let percentageGainedFromNowUntilAge55 = ValueUtils.calculatePercentageGained(totalInUniqueMovements, totalMonthlyAndYearlyUntil2035)
-    let percentageGainedFromNowUntilAge65 = ValueUtils.calculatePercentageGained(totalInUniqueMovements, totalMonthlyAndYearlyUntil2045)
+    let percentageGainedFromNowUntilAge55 = ValueUtils.calculatePercentageGained(totalInUniqueMovements, (totalMonthlyAndYearlyUntil2035 + totalInUniqueMovements))
+    let percentageGainedFromNowUntilAge65 = ValueUtils.calculatePercentageGained(totalInUniqueMovements, (totalMonthlyAndYearlyUntil2045 + totalInUniqueMovements))
 
     if (percentageGainedFromNowUntilAge55 < 0) percentageGainedFromNowUntilAge55 = 0
     if (percentageGainedFromNowUntilAge65 < 0) percentageGainedFromNowUntilAge65 = 0
@@ -260,7 +266,7 @@ function DashboardUpperComponent() {
                     symbolColor="white"
                     showSymbol={false}
                     plusData={{
-                      amount: `${percentageGainedFromNowUntilAge55.toString()}`,
+                      amount: `${percentageGainedFromNowUntilAge55.toFixed(2)}`,
                       position: "middle"
                     }}
                   />
@@ -302,7 +308,7 @@ function DashboardUpperComponent() {
                     symbolColor="white"
                     showSymbol={false}
                     plusData={{
-                      amount: `${percentageGainedFromNowUntilAge65.toString()}`,
+                      amount: `${percentageGainedFromNowUntilAge65.toFixed(2)}`,
                       position: "middle"
                     }}
                   />

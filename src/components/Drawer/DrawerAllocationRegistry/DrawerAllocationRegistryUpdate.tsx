@@ -40,7 +40,7 @@ function DrawerAllocationRegistryUpdateComponent(
       onSuccess: () => {
         form.reset()
         Toast.success("Registro atualizado com sucesso!")
-        queryClient.invalidateQueries({ queryKey: ["allocation"] })
+        queryClient.invalidateQueries()
       }
     })
 

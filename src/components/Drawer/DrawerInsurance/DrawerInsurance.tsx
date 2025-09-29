@@ -28,7 +28,7 @@ function DrawerInsuranceComponent() {
         onSuccess: () => {
             form.reset()
             Toast.success("Seguro cadastrado com sucesso")
-            queryClient.invalidateQueries({ queryKey: ["insurance"] })
+            queryClient.invalidateQueries()
         }
     })
 

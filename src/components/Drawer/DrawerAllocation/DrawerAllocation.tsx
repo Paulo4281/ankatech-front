@@ -28,7 +28,7 @@ function DrawerAllocationComponent() {
         onSuccess: () => {
             form.reset()
             Toast.success("Alocação cadastrada com sucesso")
-            queryClient.invalidateQueries({ queryKey: ["allocation"] })
+            queryClient.invalidateQueries()
         }
     })
 

@@ -28,8 +28,6 @@ function HeritageChartComponent() {
 
     const { simulation, setSimulation } = useHeritageChartSimulationStore()
 
-    console.log(simulation)
-
     const [selectedPlan, setSelectedPlan] = useState<TPlanTypes>("original")
     const [simulationData, setSimulationData] = useState<TSimulationResponse>({} as TSimulationResponse)
 
@@ -46,6 +44,7 @@ function HeritageChartComponent() {
       enabled: simulation?.id ? true : false
     })
 
+
     useEffect(() => {
       if (simulation) {
         setSimulation({ ...simulation, selected: selectedPlan })
@@ -60,14 +59,14 @@ function HeritageChartComponent() {
     }, [simulationDataResponse])
 
     const chartData = [
-      { year: "2025", original: 5, current: 10, done: 10 },
-      { year: "2030", original: 10, current: 12, done: 12 },
-      { year: "2035", original: 15, current: 16, done: 16 },
-      { year: "2040", original: 18, current: 18, },
-      { year: "2045", original: 22, current: 19, },
-      { year: "2050", original: 27, current: 19, },
-      { year: "2055", original: 28, current: 22 },
-      { year: "2060", original: 30, current: 25 }
+      { year: "2025", original: simulation?.chartInfo?.[2025]?.original, current: simulation?.chartInfo?.[2025]?.current, done: simulation?.chartInfo?.[2025]?.done },
+      { year: "2030", original: simulation?.chartInfo?.[2030]?.original, current: simulation?.chartInfo?.[2030]?.current, done: simulation?.chartInfo?.[2030]?.done },
+      { year: "2035", original: simulation?.chartInfo?.[2035]?.original, current: simulation?.chartInfo?.[2035]?.current, },
+      { year: "2040", original: simulation?.chartInfo?.[2040]?.original, current: simulation?.chartInfo?.[2040]?.current, },
+      { year: "2045", original: simulation?.chartInfo?.[2045]?.original, current: simulation?.chartInfo?.[2045]?.current, },
+      { year: "2050", original: simulation?.chartInfo?.[2050]?.original, current: simulation?.chartInfo?.[2050]?.current, },
+      { year: "2055", original: simulation?.chartInfo?.[2055]?.original, current: simulation?.chartInfo?.[2055]?.current, },
+      { year: "2060", original: simulation?.chartInfo?.[2060]?.original, current: simulation?.chartInfo?.[2060]?.current, }
     ]
     const chartConfig = {
       original: {

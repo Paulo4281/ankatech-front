@@ -32,7 +32,7 @@ function DrawerMovementComponent() {
         onSuccess: () => {
             form.reset()
             Toast.success("Movimento cadastrado com sucesso")
-            queryClient.invalidateQueries({ queryKey: ["movement"] })
+            queryClient.invalidateQueries()
         }
     })
 

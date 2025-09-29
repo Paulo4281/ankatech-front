@@ -32,7 +32,7 @@ function DashboardMovementsComponent() {
 
     function handleClassChange(value: TMovementClasses) {
         setSelectedClass(value)
-        queryClient.invalidateQueries({ queryKey: ["movements"] })
+        queryClient.invalidateQueries()
     }
 
     return (

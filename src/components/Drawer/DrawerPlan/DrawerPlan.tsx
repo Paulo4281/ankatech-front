@@ -40,7 +40,7 @@ function DrawerPlanDuplicateComponent() {
         data.familyMemberId = familyMember?.id
 
         await saveSimulationService.mutateAsync(data)
-        queryClient.invalidateQueries({ queryKey: ["simulation"] })
+        queryClient.invalidateQueries()
     }
 
     return (
