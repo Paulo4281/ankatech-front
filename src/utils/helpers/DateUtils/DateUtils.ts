@@ -17,6 +17,21 @@ export class DateUtils {
         return moment(date).add(months, "months").toDate()
     }
 
+    static howMuchTimeFromXInPeriod(dateStart: Date, dateEnd: Date, period: "monthly" | "yearly"): number {
+        const now = dateStart
+
+        const yearDiff = dateEnd.getFullYear() - now.getFullYear()
+        const monthDiff = dateEnd.getMonth() - now.getMonth()
+
+        const totalPeriod = yearDiff * 12 + monthDiff
+
+        if (period === "yearly") {
+            return Math.floor(totalPeriod / 12)
+        }
+
+        return totalPeriod
+    }
+
     static formatDuration(months: number): string {
         if (months < 12) {
             return `${months} ${months === 1 ? "mês" : "meses"}`

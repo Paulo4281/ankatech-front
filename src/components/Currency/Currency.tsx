@@ -49,7 +49,7 @@ function CurrencyComponent(
                 size={size}
             />
             {
-                plusData?.amount &&
+                Number(plusData?.amount) > 0 &&
                 (
                     <>
                         <span

@@ -10,27 +10,153 @@ import { useFindFamilyMember } from "@/services/FamilyMember/FamilyMemberService
 import type { TFamilyMemberResponse } from "@/types/FamilyMember/TFamilyMember"
 import { useState, useEffect } from "react"
 import { useFamilyMemberStore } from "@/stores/FamilyMember/FamilyMemberStore"
+import { useFindMovement } from "@/services/Movement/MovementService"
+import type { TMovementResponse } from "@/types/Movement/TMovement"
+import { ValueUtils } from "@/utils/helpers/ValueUtils/ValueUtils"
+import { DateUtils } from "@/utils/helpers/DateUtils/DateUtils"
+
+type TMovementHandler = {
+  type: "earning" | "expense",
+  frequency: "unique" | "monthly" | "yearly",
+  dateEnd: string | null
+  value: number
+}
 
 function DashboardUpperComponent() {
-    const { data, isLoading, isError } = useFindFamilyMember({
+    const { data: familyMembersData } = useFindFamilyMember({
       filters: {
         familyId: "86ca4305-e9a2-47a8-8d4c-d0d2c17dc112"
       }
     })
 
-    const [familyMembers, setFamilyMembers] = useState<TFamilyMemberResponse[]>([])
-
     const { familyMember, setFamilyMember } = useFamilyMemberStore()
 
-    useEffect(() => {
-      if (data) {
-        setFamilyMembers(data as TFamilyMemberResponse[])
+    const [familyMembers, setFamilyMembers] = useState<TFamilyMemberResponse[]>([])
+    const [movements, setMovements] = useState<TMovementResponse[]>([])
+
+    const [movementsUntil, setMovementsUntil] = useState<{ [key: string]: Partial<TMovementHandler>[] }>({})
+
+    const { data: movementData } = useFindMovement({
+      filters: {
+        familyMemberId: familyMember?.id as string,
+        class: "financial,fixed"
       }
-    }, [data])
+    })
+
+    useEffect(() => {
+      if (familyMembersData) {
+        setFamilyMembers(familyMembersData as TFamilyMemberResponse[])
+      }
+    }, [familyMembersData])
+
+    useEffect(() => {
+      if (movementData) {
+        setMovements(movementData)
+        let allMovements: { [key: string]: Partial<TMovementHandler>[] } = {}
+
+        movementData.forEach((movement) => {
+
+          const movementDateStart = DateUtils.formatDate(movement.dateStart)
+
+          if (!allMovements[movementDateStart]) {
+            allMovements[movementDateStart] = []
+          }
+
+          allMovements[movementDateStart].push({
+              type: movement.type,
+              frequency: movement.frequency,
+              dateEnd: movement.dateEnd ? DateUtils.formatDate(movement.dateEnd) : null,
+              value: Number(movement.value)
+          })
+        })
+
+        setMovementsUntil(allMovements)
+      }
+    }, [movementData])
 
     function handleFamilyMemberChange(value: string) {
       setFamilyMember(familyMembers.find((familyMember) => familyMember.id === value) as TFamilyMemberResponse)
     }
+
+    let totalInUniqueMovements = 0
+    let totalMonthlyAndYearlyUntil2035 = 0
+    let totalMonthlyAndYearlyUntil2045 = 0
+
+    let totalInMonthlyAndYearlyEarnings = 0
+    let totalInMonthlyAndYearlyExpenses = 0
+
+    Object.keys(movementsUntil).forEach((key) => {
+      movementsUntil[key].forEach((movement) => {
+
+        if (movement.frequency === "unique") {
+          if (movement.type === "earning") {
+            totalInUniqueMovements += Number(movement.value)
+          } else if (movement.type === "expense") {
+            totalInUniqueMovements -= Number(movement.value)
+          }
+        } else {
+
+          if (movement.dateEnd) {
+            const yearsFromDatestart = DateUtils.howMuchTimeFromXInPeriod(new Date(key), new Date(movement.dateEnd), "yearly")
+
+            if (yearsFromDatestart <= 10) {
+              if (movement.frequency === "monthly") {
+                const monthsFromDatestart = DateUtils.howMuchTimeFromXInPeriod(new Date(key), new Date(movement.dateEnd), "monthly")
+
+                if (movement.type === "earning") {
+                  totalMonthlyAndYearlyUntil2035 += (Number(movement.value) * monthsFromDatestart) + totalInUniqueMovements
+                } else if (movement.type === "expense") {
+                  totalMonthlyAndYearlyUntil2035 -= Number(movement.value) * monthsFromDatestart
+                }
+              } else if (movement.frequency === "yearly") {
+                if (movement.type === "earning") {
+                  totalMonthlyAndYearlyUntil2035 += (Number(movement.value) * yearsFromDatestart) + totalInUniqueMovements
+                } else if (movement.type === "expense") {
+                  totalMonthlyAndYearlyUntil2035 -= Number(movement.value) * yearsFromDatestart
+                }
+              }
+            }
+
+            if (yearsFromDatestart > 0) {
+              if (movement.frequency === "monthly") {
+                const monthsFromDatestart = DateUtils.howMuchTimeFromXInPeriod(new Date(key), new Date(movement.dateEnd), "monthly")
+
+                if (movement.type === "earning") {
+                  totalMonthlyAndYearlyUntil2045 += (Number(movement.value) * monthsFromDatestart) + totalInUniqueMovements
+                  totalInMonthlyAndYearlyEarnings += Number(movement.value)
+                } else if (movement.type === "expense") {
+                  totalMonthlyAndYearlyUntil2045 -= Number(movement.value) * monthsFromDatestart
+                  totalInMonthlyAndYearlyExpenses += Number(movement.value)
+                }
+              } else if (movement.frequency === "yearly") {
+                if (movement.type === "earning") {
+                  totalMonthlyAndYearlyUntil2045 += (Number(movement.value) * yearsFromDatestart) + totalInUniqueMovements
+                  totalInMonthlyAndYearlyEarnings += Number(movement.value) / 12
+                } else if (movement.type === "expense") {
+                  totalMonthlyAndYearlyUntil2045 -= Number(movement.value) * yearsFromDatestart
+                  totalInMonthlyAndYearlyExpenses += Number(movement.value) / 12
+                }
+                }
+              }
+          }
+
+        }
+
+      })
+    })
+
+    const currentAgeAchieved = ValueUtils.calculatePlanProgress(20000, totalInUniqueMovements)
+    const age55Expectation = ValueUtils.calculatePlanProgress(100000, totalMonthlyAndYearlyUntil2035)
+    const age65Expectation = ValueUtils.calculatePlanProgress(250000, totalMonthlyAndYearlyUntil2045)
+
+    const totalMonthlyEarningVsExpense = totalInMonthlyAndYearlyEarnings - totalInMonthlyAndYearlyExpenses
+    const monthlyPercentageGaining = ValueUtils.howMuchPercentage(totalMonthlyEarningVsExpense, 5000)
+
+    let percentageGainedFromNowUntilAge55 = ValueUtils.calculatePercentageGained(totalInUniqueMovements, totalMonthlyAndYearlyUntil2035)
+    let percentageGainedFromNowUntilAge65 = ValueUtils.calculatePercentageGained(totalInUniqueMovements, totalMonthlyAndYearlyUntil2045)
+
+    if (percentageGainedFromNowUntilAge55 < 0) percentageGainedFromNowUntilAge55 = 0
+    if (percentageGainedFromNowUntilAge65 < 0) percentageGainedFromNowUntilAge65 = 0
 
     return (
         <>
@@ -66,12 +192,13 @@ function DashboardUpperComponent() {
                   size="sm"
                 />
                 <Currency
-                  amount="2.679.930,00"
+                  amount={ValueUtils.centsIntToCurrency(totalInUniqueMovements)}
                   amountColor="white"
                   size="xl"
                   symbolColor="gray"
+                  showSymbol={false}
                   plusData={{
-                    amount: "34,75",
+                    amount: monthlyPercentageGaining.toString(),
                     position: "bottom"
                   }}
                 />
@@ -89,13 +216,14 @@ function DashboardUpperComponent() {
                 />
                 <div className="flex w-full flex-col">
                   <Currency
-                    amount="2.679.930,00"
+                    amount={ValueUtils.centsIntToCurrency(totalInUniqueMovements)}
                     amountColor="white"
                     size="sm"
                     symbolColor="white"
+                    showSymbol={false}
                   />
                   <ProgressBar
-                    value={30}
+                    value={currentAgeAchieved.achieved}
                     striked={false}
                   />
                   <Divider
@@ -126,17 +254,18 @@ function DashboardUpperComponent() {
                 />
                 <div className="flex flex-col w-full">
                   <Currency
-                    amount="3.173,960,00"
+                    amount={ValueUtils.centsIntToCurrency(totalMonthlyAndYearlyUntil2035)}
                     amountColor="white"
                     size="sm"
                     symbolColor="white"
+                    showSymbol={false}
                     plusData={{
-                      amount: "18,37",
+                      amount: `${percentageGainedFromNowUntilAge55.toString()}`,
                       position: "middle"
                     }}
                   />
                   <ProgressBar
-                    value={25}
+                    value={age55Expectation.achieved}
                     striked={true}
                   />
                   <Divider
@@ -167,17 +296,18 @@ function DashboardUpperComponent() {
                 />
                 <div className="flex flex-col w-full">
                   <Currency
-                    amount="2.173,960,00"
+                    amount={ValueUtils.centsIntToCurrency(totalMonthlyAndYearlyUntil2045)}
                     amountColor="white"
                     size="sm"
                     symbolColor="white"
+                    showSymbol={false}
                     plusData={{
-                      amount: "10,3",
+                      amount: `${percentageGainedFromNowUntilAge65.toString()}`,
                       position: "middle"
                     }}
                   />
                   <ProgressBar
-                    value={45}
+                    value={age65Expectation.achieved}
                     striked={true}
                   />
                   <Divider
