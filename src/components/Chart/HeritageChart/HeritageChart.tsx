@@ -35,13 +35,15 @@ function HeritageChartComponent() {
 
     const { familyMember } = useFamilyMemberStore()
 
+    console.log(simulation)
+
     const { data: simulationDataResponse } = useFindSimulation({
       filters: {
-        id: simulation?.id as string,
+        id: simulation?.id ? simulation.id : null,
         familyMemberId: familyMember?.id as string,
         status: selectedStatus
       },
-      enabled: simulation?.id ? true : false
+      enabled: true
     })
 
 

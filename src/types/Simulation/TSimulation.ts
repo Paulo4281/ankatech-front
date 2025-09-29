@@ -6,7 +6,7 @@ type TSimulationCreate = z.infer<typeof SimulationValidation>
 type TSimulationUpdate = TSimulationCreate
 
 type TSimulationResponse = TSimulationCreate & {
-    id: string
+    id: string | null
     updatedAt: string
     createdAt: string
     chartInfo?: {

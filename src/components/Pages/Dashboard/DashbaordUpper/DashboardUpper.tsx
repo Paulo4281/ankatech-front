@@ -5,7 +5,6 @@ import { Description } from "@/components/Description/Description"
 import { Divider } from "@/components/Divider/Divider"
 import { ProgressBar } from "@/components/ProgressBar/ProgressBar"
 import { Badge } from "@/components/ui/badge"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { useFindFamilyMember } from "@/services/FamilyMember/FamilyMemberService"
 import type { TFamilyMemberResponse } from "@/types/FamilyMember/TFamilyMember"
 import { useState, useEffect } from "react"
@@ -15,6 +14,7 @@ import type { TMovementResponse } from "@/types/Movement/TMovement"
 import { ValueUtils } from "@/utils/helpers/ValueUtils/ValueUtils"
 import { DateUtils } from "@/utils/helpers/DateUtils/DateUtils"
 import { useHeritageChartSimulationStore } from "@/stores/HeritageChartSimulation/HeritageChartSimulationStore"
+import { SelectFamilyMember } from "@/components/Select/SelectFamilyMember"
 
 type TMovementHandler = {
   type: "earning" | "expense",
@@ -24,17 +24,10 @@ type TMovementHandler = {
 }
 
 function DashboardUpperComponent() {
-    const { data: familyMembersData } = useFindFamilyMember({
-      filters: {
-        familyId: "86ca4305-e9a2-47a8-8d4c-d0d2c17dc112"
-      }
-    })
-
-    const { familyMember, setFamilyMember } = useFamilyMemberStore()
+    const { familyMember } = useFamilyMemberStore()
 
     const { simulation } = useHeritageChartSimulationStore()
-
-    const [familyMembers, setFamilyMembers] = useState<TFamilyMemberResponse[]>([])
+    
     const [movements, setMovements] = useState<TMovementResponse[]>([])
 
     const [movementsUntil, setMovementsUntil] = useState<{ [key: string]: Partial<TMovementHandler>[] }>({})
@@ -45,12 +38,6 @@ function DashboardUpperComponent() {
         class: "financial,fixed"
       }
     })
-
-    useEffect(() => {
-      if (familyMembersData) {
-        setFamilyMembers(familyMembersData as TFamilyMemberResponse[])
-      }
-    }, [familyMembersData])
 
     useEffect(() => {
       if (movementData) {
@@ -76,10 +63,6 @@ function DashboardUpperComponent() {
         setMovementsUntil(allMovements)
       }
     }, [movementData])
-
-    function handleFamilyMemberChange(value: string) {
-      setFamilyMember(familyMembers.find((familyMember) => familyMember.id === value) as TFamilyMemberResponse)
-    }
 
     let totalInUniqueMovements = 0
     let totalMonthlyAndYearlyUntil2035 = 0
@@ -175,21 +158,7 @@ function DashboardUpperComponent() {
 
             <div className="space-y-5">
               
-              <Select onValueChange={(value) => handleFamilyMemberChange(value)}>
-                <SelectTrigger className="w-[220px] rounded-3xl !text-white text-lg">
-                  <SelectValue placeholder={familyMember?.name || "Selecione"} />
-                </SelectTrigger>
-                <SelectContent>
-                  {
-                    familyMembers.length > 0 &&
-                    (
-                      familyMembers.map((familyMember) => (
-                        <SelectItem value={familyMember.id} key={familyMember.id}>{familyMember.name}</SelectItem>
-                      ))
-                    )
-                  }
-                </SelectContent>
-              </Select>
+              <SelectFamilyMember />
 
               <div>
                 <Description

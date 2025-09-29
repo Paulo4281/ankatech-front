@@ -9,14 +9,14 @@ type THeritageChartSimulationDataProps = {
 
 type THeritageChartSimulation = {
     simulation: TSimulationResponse & Partial<THeritageChartSimulationDataProps> | null
-    setSimulation: (simulation: TSimulationResponse & Partial<THeritageChartSimulationDataProps>) => void
+    setSimulation: (simulation: TSimulationResponse & Partial<THeritageChartSimulationDataProps> | null) => void
 }
 
 const useHeritageChartSimulationStore = create<THeritageChartSimulation>()(
     persist(
         (set) => ({
             simulation: null,
-            setSimulation: (simulation: TSimulationResponse & Partial<THeritageChartSimulationDataProps>) => set({ simulation })
+            setSimulation: (simulation: TSimulationResponse & Partial<THeritageChartSimulationDataProps> | null) => set({ simulation })
         }),
         { name: "persist:heritage-chart" }
     )

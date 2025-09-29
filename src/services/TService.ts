@@ -1,6 +1,6 @@
 type TServiceProps = {
     onSuccess?: () => void
-    filters?: Record<string, string>
+    filters?: Record<string, string | null>
     enabled?: boolean
 }
 
