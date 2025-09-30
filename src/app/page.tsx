@@ -1,3 +1,5 @@
+"use client"
+
 import { DashboardUpper } from "@/components/Pages/Dashboard/DashbaordUpper/DashboardUpper"
 import { DashboardChart } from "@/components/Pages/Dashboard/DashboardChart/DashboardChart"
 import { DashboardTimeline } from "@/components/Pages/Dashboard/DashboardTimeline/DashboardTimeline"

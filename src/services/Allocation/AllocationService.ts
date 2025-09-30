@@ -13,7 +13,7 @@ class AllocationService {
         }))?.data
     }
 
-    public static async findAllocationRoute(query?: Record<string, string>) {
+    public static async findAllocationRoute(query?: Record<string, string | null>) {
         const parsedQuery = objectToQueryString(query)
 
         return (await API.GET({

@@ -19,18 +19,21 @@ import { ModalConfirmation } from "@/components/Modal/ModalConfirmation/ModalCon
 import { useDeleteSimulation } from "@/services/Simulation/SimulationService"
 import { queryClient } from "@/providers/QueryClientProvider"
 import { Toast } from "@/components/Toast/Toast"
-import { useSearchParams } from "next/navigation"
 import { DrawerPlanAddBtn } from "@/components/Drawer/DrawerPlan/DrawerPlanAddBtn"
 
 type TPlanTypes = "original" | "current" | "done"
 
 type TStatusTypes = "invalid" | "dead"
 
-function HeritageChartComponent() {
-    const searchParams = useSearchParams()
+type THeritageChartProps = {
+  simulationIdFromParams?: string
+}
 
-    const simulationIdFromParams = searchParams.get("simulationId")
-
+function HeritageChartComponent(
+  {
+    simulationIdFromParams=""
+  }: THeritageChartProps
+) {
     const [selectedStatus, setSelectedStatus] = useState<TStatusTypes>("dead")
     const [deletedSimulation, setDeletedSimulation] = useState<boolean>(false)
 

@@ -5,7 +5,7 @@ import type { TFamilyMemberResponse } from "@/types/FamilyMember/TFamilyMember"
 import { objectToQueryString } from "@/utils/helpers/ObjToQueryString/ObjToQueryString"
 
 class FamilyMemberService {
-    public static async findFamilyMemberRoute(query?: Record<string, string>) {
+    public static async findFamilyMemberRoute(query?: Record<string, string | null>) {
         const parsedQuery = objectToQueryString(query)
 
         return (await API.GET({

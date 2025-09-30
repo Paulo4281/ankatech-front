@@ -14,7 +14,7 @@ class InsuranceService {
         }))?.data
     }
 
-    public static async findInsuranceRoute(query?: Record<string, string>) {
+    public static async findInsuranceRoute(query?: Record<string, string | null>) {
         const parsedQuery = objectToQueryString(query)
 
         return (await API.GET({

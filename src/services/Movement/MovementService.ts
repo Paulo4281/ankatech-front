@@ -14,7 +14,7 @@ class MovementService {
         }))?.data
     }
 
-    public static async findMovementRoute(query?: Record<string, string>) {
+    public static async findMovementRoute(query?: Record<string, string | null>) {
         const parsedQuery = objectToQueryString(query)
 
         return (await API.GET({
