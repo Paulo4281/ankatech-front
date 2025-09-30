@@ -14,6 +14,15 @@ class SimulationService {
         }))?.data
     }
 
+    public static async listHistorySimulationRoute(query?: Record<string, string | null>) {
+        const parsedQuery = objectToQueryString(query)
+
+        return (await API.GET({
+            prefix: "/simulation",
+            url: `/list-history${parsedQuery}`
+        }))?.data
+    }
+
     public static async findSimulationRoute(query?: Record<string, string | null>) {
         const parsedQuery = objectToQueryString(query)
 
@@ -46,6 +55,14 @@ function useSaveSimulation(params?: TServiceProps) {
     })
 }
 
+function useListHistorySimulation(params?: TServiceProps) {
+    return useQueryHook<TSimulationResponse[]>({
+        queryKey: "simulation",
+        queryParams: params?.filters,
+        queryFn: () => SimulationService.listHistorySimulationRoute(params?.filters)
+    })
+}
+
 function useFindSimulation(params?: TServiceProps) {
     return useQueryHook<TSimulationResponse>({
         queryKey: "simulation",
@@ -69,9 +86,15 @@ function useDeleteSimulation(params?: TServiceProps) {
     })
 }
 
+async function fetchFindSimulation(filters?: Record<string, string | null>): Promise<TSimulationResponse> {
+    return SimulationService.findSimulationRoute(filters)
+}
+
 export {
     useSaveSimulation,
     useFindSimulation,
+    useListHistorySimulation,
     useUpdateSimulation,
-    useDeleteSimulation
+    useDeleteSimulation,
+    fetchFindSimulation
 }

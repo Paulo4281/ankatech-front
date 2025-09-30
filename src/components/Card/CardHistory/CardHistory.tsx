@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button"
 import { DateUtils } from "@/utils/helpers/DateUtils/DateUtils"
 import { ValueUtils } from "@/utils/helpers/ValueUtils/ValueUtils"
 import { ChartLine } from "lucide-react"
+import Link from "next/link"
 
 type TCardHistoryProps = {
     title: string
@@ -30,7 +31,9 @@ function CardHistoryComponent(
         <Currency amount={ValueUtils.centsIntToCurrency(version.finalHeritage)} amountColor="white" size="sm" showSymbol={false} />,
         DateUtils.formatDate(version.retirementDate),
         version.version,
-        <Button key={version.simulationId} variant={"gray"}>Ver no gráfico</Button>
+        <Link href={`/?simulationId=${version.simulationId}`}>
+            <Button key={version.simulationId} variant={"gray"}>Ver no gráfico</Button>
+        </Link>
     ])
 
     return (

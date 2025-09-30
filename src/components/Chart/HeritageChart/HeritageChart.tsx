@@ -19,12 +19,16 @@ import { ModalConfirmation } from "@/components/Modal/ModalConfirmation/ModalCon
 import { useDeleteSimulation } from "@/services/Simulation/SimulationService"
 import { queryClient } from "@/providers/QueryClientProvider"
 import { Toast } from "@/components/Toast/Toast"
+import { useSearchParams } from "next/navigation"
 
 type TPlanTypes = "original" | "current" | "done"
 
 type TStatusTypes = "invalid" | "dead"
 
 function HeritageChartComponent() {
+    const searchParams = useSearchParams()
+
+    const simulationIdFromParams = searchParams.get("simulationId")
 
     const [selectedStatus, setSelectedStatus] = useState<TStatusTypes>("dead")
     const [deletedSimulation, setDeletedSimulation] = useState<boolean>(false)
@@ -58,7 +62,7 @@ function HeritageChartComponent() {
 
     const { data: simulationDataResponse } = useFindSimulation({
       filters: {
-        id: simulation?.id ? simulation.id : null,
+        id: simulationIdFromParams ? simulationIdFromParams : simulation?.id ? simulation?.id : null,
         familyMemberId: familyMember?.id as string,
         status: selectedStatus
       },
@@ -66,8 +70,15 @@ function HeritageChartComponent() {
     })
 
     useEffect(() => {
+      setSimulation({  ...simulation!, selected: selectedPlan })
+    }, [selectedPlan])
+
+    useEffect(() => {
       if (simulationDataResponse) {
-        setSimulation({  ...simulationDataResponse, selected: selectedPlan })
+        setSimulation({
+          ...simulationDataResponse,
+          selected: selectedPlan,
+        })
       }
     }, [simulationDataResponse])
 

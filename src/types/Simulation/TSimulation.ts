@@ -16,6 +16,7 @@ type TSimulationResponse = TSimulationCreate & {
             done: number
         }
     }
+    finalPrize?: number
 }
 
 export type {
