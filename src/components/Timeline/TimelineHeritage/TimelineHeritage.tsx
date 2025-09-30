@@ -92,11 +92,11 @@ function TimelineHeritageComponent() {
             const eventsThisYear = wageEvents.filter((event) => event.year === year)
             return (
             <div key={year} className="relative z-10 flex flex-col items-center flex-1 space-y-1 text-center">
-                {eventsThisYear.map((event) => (
-                    <>
-                        <Description text={`${event.title} ${ValueUtils.centsIntToCurrency(event.value || 0)}`} color="green" size="extra-sm" />
-                        <div className="w-3 h-3 bg-green-400 rounded-full border-2 border-gray-900 mt-1" />
-                    </>
+                {eventsThisYear.map((event, index) => (
+                    <div key={`${event.title}-${index}`}>
+                      <Description text={`${event.title} ${ValueUtils.centsIntToCurrency(event.value || 0)}`} color="green" size="extra-sm" />
+                      <div className="w-3 h-3 bg-green-400 rounded-full border-2 border-gray-900 mt-1" />
+                    </div>
                 ))}
             </div>
             )
@@ -144,11 +144,11 @@ function TimelineHeritageComponent() {
             const eventsThisYear = expenseEvents.filter((event) => event.year === year)
             return (
             <div key={year} className="relative z-10 flex flex-col items-center flex-1 space-y-1">
-                {eventsThisYear.map((event) => (
-                    <>
+                {eventsThisYear.map((event, index) => (
+                    <div key={`${event.year}-${index}`}>
                         <Description text={`${ValueUtils.centsIntToCurrency(event.value || 0)}`} color="red" size="extra-sm" />
                         <div className="w-3 h-3 bg-red-400 rounded-full border-2 border-gray-900 mt-1" />
-                    </>
+                    </div>
                 ))}
             </div>
             )

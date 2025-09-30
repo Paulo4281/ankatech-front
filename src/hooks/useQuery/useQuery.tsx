@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query"
 
 type TUseQueryProps = {
     queryKey: string
-    queryParams?: Record<string, string>
+    queryParams?: Record<string, string | null>
     queryFn: any
     enabled?: boolean
 }

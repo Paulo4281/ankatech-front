@@ -14,7 +14,7 @@ class SimulationService {
         }))?.data
     }
 
-    public static async findSimulationRoute(query?: Record<string, string>) {
+    public static async findSimulationRoute(query?: Record<string, string | null>) {
         const parsedQuery = objectToQueryString(query)
 
         return (await API.GET({
@@ -28,6 +28,13 @@ class SimulationService {
             prefix: "/simulation",
             url: "",
             data: data
+        }))?.data
+    }
+
+    public static async deleteSimulationRoute(id: string) {
+        return (await API.DELETE({
+            prefix: "/simulation",
+            url: `/${id}`
         }))?.data
     }
 }
@@ -55,8 +62,16 @@ function useUpdateSimulation(params?: TServiceProps) {
     })
 }
 
+function useDeleteSimulation(params?: TServiceProps) {
+    return useMutationHook<string, void>({
+        mutationFn: (id: string) => SimulationService.deleteSimulationRoute(id),
+        onSuccess: params?.onSuccess
+    })
+}
+
 export {
     useSaveSimulation,
     useFindSimulation,
-    useUpdateSimulation
+    useUpdateSimulation,
+    useDeleteSimulation
 }

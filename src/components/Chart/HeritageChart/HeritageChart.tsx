@@ -12,30 +12,49 @@ import { CartesianGrid, Line, LineChart, Tooltip, XAxis, YAxis } from "recharts"
 import { useState, useEffect } from "react"
 import { useFamilyMemberStore } from "@/stores/FamilyMember/FamilyMemberStore"
 import { useFindSimulation } from "@/services/Simulation/SimulationService"
-import { TSimulationResponse } from "@/types/Simulation/TSimulation"
 import { useHeritageChartSimulationStore } from "@/stores/HeritageChartSimulation/HeritageChartSimulationStore"
 import { DrawerPlanDuplicate } from "@/components/Drawer/DrawerPlan/DrawerPlan"
 import { DrawerPlanUpdate } from "@/components/Drawer/DrawerPlan/DrawerPlanUpdate"
 import { ModalConfirmation } from "@/components/Modal/ModalConfirmation/ModalConfirmation"
+import { useDeleteSimulation } from "@/services/Simulation/SimulationService"
+import { queryClient } from "@/providers/QueryClientProvider"
+import { Toast } from "@/components/Toast/Toast"
 
 type TPlanTypes = "original" | "current" | "done"
 
-type TStatusTypes = "alive" | "dead"
+type TStatusTypes = "invalid" | "dead"
 
 function HeritageChartComponent() {
 
-    const [selectedStatus, setSelectedStatus] = useState<TStatusTypes>("alive")
+    const [selectedStatus, setSelectedStatus] = useState<TStatusTypes>("dead")
+    const [deletedSimulation, setDeletedSimulation] = useState<boolean>(false)
 
     const { simulation, setSimulation } = useHeritageChartSimulationStore()
 
     const [selectedPlan, setSelectedPlan] = useState<TPlanTypes>("original")
-    const [simulationData, setSimulationData] = useState<TSimulationResponse>({} as TSimulationResponse)
 
     const [openedDeleteModal, setOpenedDeleteModal] = useState<boolean>(false)
 
     const { familyMember } = useFamilyMemberStore()
 
-    console.log(simulation)
+    const deleteSimulationService = useDeleteSimulation({
+      onSuccess: () => {
+        Toast.success("Simulação deletada com sucesso")
+        setDeletedSimulation(true)
+      }
+    })
+
+    useEffect(() => {
+      if (deletedSimulation) {
+        setSimulation(null)
+      }
+    }, [deletedSimulation])
+
+    async function handleDeleteSimulation() {
+      const currentSimulationId = simulation?.id as string
+      await deleteSimulationService.mutateAsync(currentSimulationId)
+      queryClient.invalidateQueries()
+    }
 
     const { data: simulationDataResponse } = useFindSimulation({
       filters: {
@@ -43,20 +62,12 @@ function HeritageChartComponent() {
         familyMemberId: familyMember?.id as string,
         status: selectedStatus
       },
-      enabled: true
+      enabled: !!simulation?.id
     })
-
-
-    useEffect(() => {
-      if (simulation) {
-        setSimulation({ ...simulation, selected: selectedPlan })
-      }
-    }, [selectedPlan])
 
     useEffect(() => {
       if (simulationDataResponse) {
-        setSimulationData(simulationDataResponse)
-        setSimulation({ ...simulationDataResponse, selected: selectedPlan })
+        setSimulation({  ...simulationDataResponse, selected: selectedPlan })
       }
     }, [simulationDataResponse])
 
@@ -90,11 +101,11 @@ function HeritageChartComponent() {
         <div>
           <RadioGroup defaultValue="dead" className="flex justify-center mb-10">
             <div className="flex items-center space-x-2">
-              <RadioGroupItem className="p-3  data-[state=checked]:bg-blue-300 data-[state=checked]:border-blue-300" value="dead" id="dead" />
+              <RadioGroupItem onClick={() => setSelectedStatus("dead")} className="p-3  data-[state=checked]:bg-blue-300 data-[state=checked]:border-blue-300" value="dead" id="dead" />
               <Label className="text-white text-lg" htmlFor="dead">Morto</Label>
             </div>
             <div className="flex items-center space-x-2">
-              <RadioGroupItem className="p-3 data-[state=checked]:bg-blue-300 data-[state=checked]:border-blue-300" value="invalid" id="invalid" />
+              <RadioGroupItem onClick={() => setSelectedStatus("invalid")} className="p-3 data-[state=checked]:bg-blue-300 data-[state=checked]:border-blue-300" value="invalid" id="invalid" />
               <Label className="text-white text-lg" htmlFor="invalid">Inválido</Label>
             </div>
           </RadioGroup>
@@ -192,7 +203,7 @@ function HeritageChartComponent() {
             </div>
 
             <ModalConfirmation
-              onAccept={() => console.log("accepted!")}
+              onAccept={handleDeleteSimulation}
               opened={openedDeleteModal}
               onOpenChange={setOpenedDeleteModal}
             />
