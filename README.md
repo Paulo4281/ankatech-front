@@ -1,36 +1,76 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# AnkaTech - Case Frontend
 
-## Getting Started
+Frontend do sistema MFO, desenvolvido com **Next.js**, **TypeScript** e **TailwindCSS**.
 
-First, run the development server:
+## Tecnologias
+
+- Next.js 14+
+- TypeScript
+- TailwindCSS
+- React
+- Docker / Docker Compose
+
+## Estrutura do Projeto
+
+- `src/`
+  - `components/` Componentes reutilizáveis
+  - `app/` Páginas do Next.js
+  - `services/` Comunicação com API (fetch/axios)
+  - `stores/` Estados globais com zustand
+  - `validators/` Validações do front com Zod
+  - `utils/` Helpers
+- `public/` Assets públicos (imagens, fontes)
+- `Dockerfile` Para containerização
+- `package.json`
+- `tsconfig.json`
+
+## Rodando localmente (Docker)
+
+1. Clone o repositório do frontend.
+2. Garanta que você tenha **Docker** e **Docker Compose** instalados.
+3. Se quiser rodar junto com o backend via docker-compose, utilize:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+docker-compose up --build
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Isso irá:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- Subir o frontend na porta 3000.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- Conectar automaticamente ao backend (configurado na ENV do container).
 
-## Learn More
+- Garantir que toda a aplicação esteja funcional dentro de containers isolados.
 
-To learn more about Next.js, take a look at the following resources:
+Observação: Certifique-se de que o backend também esteja rodando para que o frontend consiga consumir os endpoints da API.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Arquitetura e comunicação
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- Aplicação baseada em componentes React.
 
-## Deploy on Vercel
+- UI Components com Shadcn/UI
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- Estado gerenciado localmente, context API ou zustand.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- Consumo de API via axios para endpoints do backend.
+
+- Roteamento via Next.js Pages / App Router.
+
+- Estilos com TailwindCSS para facilitar consistência visual.
+
+## Supondoções
+
+- A aplicação assume que o backend está disponível em http://localhost:8080.
+
+- Todos os dados de teste já são populados pelo backend via migrations e init.sql.
+
+- Não é necessário criar dados manualmente para testes funcionais.
+
+## Comandos úteis
+
+- Rodar localmente:
+
+```bash
+yarn install
+yarn dev
+```

@@ -6,16 +6,17 @@ type TCurrencyProps = {
     amount: string
     amountColor: TDescriptionProps["color"]
     size: TDescriptionProps["size"]
-    symbolColor: "gray" | "white"
+    symbolColor?: "gray" | "white"
+    showSymbol?: boolean
     plusData?: {
         amount: string
         position: "bottom" | "middle"
     }
 }
 
-const symbolColorHandler: Record<TCurrencyProps["symbolColor"], string> = {
+const symbolColorHandler: Record<NonNullable<TCurrencyProps["symbolColor"]>, string> = {
     white: "text-white",
-    gray: "text-gray-500"
+    gray: "text-gray-500",
 }
 
 const plusDataPositionHandler: Record<NonNullable<TCurrencyProps["plusData"]>["position"], string> = {
@@ -28,21 +29,27 @@ function CurrencyComponent(
         amount,
         amountColor,
         size,
-        symbolColor,
+        symbolColor="white",
+        showSymbol=true,
         plusData={ amount: "", position: "bottom" }
     }: TCurrencyProps
 ) {
     return (
         <>
         <div className="flex gap-2 font-semibold">
-            <span className={`${symbolColorHandler[symbolColor]} ${sizeHandler[size]}`}>R$</span>
+            {
+                showSymbol &&
+                (
+                    <span className={`${symbolColorHandler[symbolColor]} ${sizeHandler[size]}`}>R$</span>
+                )
+            }
             <Description
                 text={`${amount}`}
                 color={amountColor}
                 size={size}
             />
             {
-                plusData?.amount &&
+                Number(plusData?.amount) > 0 &&
                 (
                     <>
                         <span

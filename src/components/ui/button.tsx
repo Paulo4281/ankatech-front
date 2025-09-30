@@ -5,7 +5,7 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive",
+  "inline-flex items-center !rounded-2xl cursor-pointer justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive",
   {
     variants: {
       variant: {
@@ -14,11 +14,29 @@ const buttonVariants = cva(
           "bg-destructive text-white hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/60",
         outline:
           "border bg-background shadow-xs hover:bg-accent hover:text-accent-foreground dark:bg-input/30 dark:border-input dark:hover:bg-input/50",
+        gray:
+          "bg-zinc-800 text-white !rounded-2xl shadow-xs hover:bg-accent hover:text-accent-foreground dark:bg-input/30 dark:border-input dark:hover:bg-input/50",
+        "outline-gray":
+          "border bg-gray-800 text-white !rounded-lg shadow-xs hover:bg-accent hover:text-accent-foreground dark:bg-input/30 dark:border-input dark:hover:bg-input/50",
+        "outline-blue":
+          "border-2 border-blue-300 bg-gray-800 text-white !rounded-lg shadow-xs hover:bg-accent hover:border-white hover:text-accent-foreground dark:bg-input/30 dark:border-input dark:hover:bg-input/50",
+        "outline-green":
+          "border-2 border-green-300 bg-gray-800 text-white !rounded-lg shadow-xs hover:bg-accent hover:border-white hover:text-accent-foreground dark:bg-input/30 dark:border-input dark:hover:bg-input/50",
+        "outline-yellow":
+          "border-2 border-orange-300 bg-gray-800 text-white !rounded-lg shadow-xs hover:bg-accent hover:border-white hover:text-accent-foreground dark:bg-input/30 dark:border-input dark:hover:bg-input/50",
+        "yellow":
+          "border-2 border-orange-300 bg-orange-300 text-black !rounded-lg shadow-xs hover:bg-accent hover:border-white hover:text-accent-foreground dark:bg-input/30 dark:border-input dark:hover:bg-input/50",
         secondary:
-          "bg-secondary text-secondary-foreground hover:bg-secondary/80",
+          "bg-secondary text-secondary-foreground hover:bg-gray-200",
+        "secondary-outline":
+          "bg-transparent text-white hover:bg-white hover:text-black",
         ghost:
-          "hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50",
+          "hover:bg-accent hover:text-accent-foreground text-gray-900 dark:hover:bg-accent/50",
         link: "text-primary underline-offset-4 hover:underline",
+        orange:
+          "bg-orange-500 text-white hover:bg-orange/90 focus-visible:ring-orange/20 dark:focus-visible:ring-orange/40 dark:bg-orange/60",
+        "orange-outline":
+          "border border-orange-500 bg-background text-orange-500 shadow-xs hover:bg-accent hover:text-accent-foreground dark:bg-input/30 dark:border-input dark:hover:bg-input/50",
       },
       size: {
         default: "h-9 px-4 py-2 has-[>svg]:px-3",
@@ -55,7 +73,4 @@ function Button({
   )
 }
 
-export {
-  Button,
-  buttonVariants
-}
+export { Button, buttonVariants }

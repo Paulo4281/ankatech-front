@@ -1,29 +1,30 @@
 import "./globals.css"
-// import { Navbar } from "../components/Navbar/Navbar"
-// import { Footer } from "../components/Footer/Footer"
-// import QueryProvider from "../providers/QueryClientProvider"
 import { ToastContainer } from "react-toastify"
+import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
+import { Sidebar } from "@/components/Sidebar/Sidebar"
+import { QueryProvider } from "@/providers/QueryClientProvider"
 
 export default function RootLayout({
   children,
 }: Readonly<{
-  children: React.ReactNode;
+  children: React.ReactNode
 }>) {
   return (
-    <html lang="en">
+    <html lang="pt-BR">
       <body
-        className={`antialiased bg-black`}
+        className={`antialiased !overflow-x-hidden bg-gray-900`}
       >
-        {/* <QueryProvider> */}
-          <ToastContainer />
-            {/* <Navbar /> */}
-
-            <main>
-              {children}
-            </main>
-
-            {/* <Footer /> */}
-        {/* </QueryProvider> */}
+        <QueryProvider>
+          <SidebarProvider>
+            <Sidebar />
+            
+            <ToastContainer />
+              <main className="!w-full">
+                <SidebarTrigger className="bg-white cursor-pointer ms-2 mt-1" />
+                {children}
+              </main>
+          </SidebarProvider>
+        </QueryProvider>
       </body>
     </html>
   );
