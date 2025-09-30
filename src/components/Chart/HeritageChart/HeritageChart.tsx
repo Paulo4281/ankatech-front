@@ -13,13 +13,14 @@ import { useState, useEffect } from "react"
 import { useFamilyMemberStore } from "@/stores/FamilyMember/FamilyMemberStore"
 import { useFindSimulation } from "@/services/Simulation/SimulationService"
 import { useHeritageChartSimulationStore } from "@/stores/HeritageChartSimulation/HeritageChartSimulationStore"
-import { DrawerPlanDuplicate } from "@/components/Drawer/DrawerPlan/DrawerPlan"
+import { DrawerPlanDuplicate } from "@/components/Drawer/DrawerPlan/DrawerPlanDuplicate"
 import { DrawerPlanUpdate } from "@/components/Drawer/DrawerPlan/DrawerPlanUpdate"
 import { ModalConfirmation } from "@/components/Modal/ModalConfirmation/ModalConfirmation"
 import { useDeleteSimulation } from "@/services/Simulation/SimulationService"
 import { queryClient } from "@/providers/QueryClientProvider"
 import { Toast } from "@/components/Toast/Toast"
 import { useSearchParams } from "next/navigation"
+import { DrawerPlanAddBtn } from "@/components/Drawer/DrawerPlan/DrawerPlanAddBtn"
 
 type TPlanTypes = "original" | "current" | "done"
 
@@ -208,9 +209,7 @@ function HeritageChartComponent() {
                 <Button variant={`${ selectedPlan === "done" ? "yellow" : "outline-yellow" }`} onClick={() => setSelectedPlan("done")} className="flex items-center gap-2">
                   Realizado
                 </Button>
-                <Button variant="secondary-outline" className="flex items-center gap-2">
-                  <Plus /> Adicionar simulação
-                </Button>
+                <DrawerPlanAddBtn />
             </div>
 
             <ModalConfirmation
